@@ -54,17 +54,17 @@ export default function Home() {
       </header>
 
       {/* hero section */}
-      <div className="w-full relative">
-        <section className="w-full grid grid-cols-12 sm:grid-cols-16 md:grid-cols-20 lg:grid-cols-24 xl:grid-cols-28 h-screen overflow-hidden">
+      <section className="w-full relative">
+        <section className="w-full grid grid-cols-16 sm:grid-cols-16 md:grid-cols-20 lg:grid-cols-24 xl:grid-cols-28 h-[100%] sm:h-[105%] overflow-hidden">
           {Array.from(Array(28 * 25), (_, index) => (
             <Tile key={index} />
           ))}
         </section>
         <div
-          className={`pointer-events-none absolute inset-0 top-1/12 -translate-y-1/5 flex flex-col gap-5 items-center justify-center z-10 ${myFontBold.className}`}
+          className={`pointer-events-none absolute inset-0 flex flex-col gap-5 items-center justify-start pt-80 z-10 ${myFontBold.className}`}
         >
           <motion.h1
-            className="text-4xl md:text-6xl lg:text-9xl text-primary font-black text-center"
+            className="text-6xl md:text-6xl lg:text-9xl text-primary font-black text-center"
             initial={{opacity: 0, y: 50}}
             animate={{opacity: 1, y: 0}}
             transition={{
@@ -75,7 +75,7 @@ export default function Home() {
             کارنامه
           </motion.h1>
           <motion.h3
-            className="text-lg md:text-xl lg:text-2xl text-[#556d9c] text-center px-4 max-w-4xl"
+            className="text-xl md:text-2xl lg:text-2xl text-[#556d9c] text-center px-4 max-w-4xl"
             initial={{opacity: 0, y: 50}}
             animate={{opacity: 1, y: 0}}
             transition={{
@@ -87,19 +87,18 @@ export default function Home() {
             فضایی برای اشتراک گذاری و بازبینی پروژه های دانشجویی
           </motion.h3>
         </div>
-      </div>
+      </section>
 
       {/* Features section */}
-      <section className="relative bg-white py-16 md:py-24">
+      <section className="relative bg-white w-full py-16 md:py-24">
         <motion.div
           className="relative overflow-hidden"
           initial={{y: 0, opacity: 0}}
-          whileInView={{y: -300, opacity: 1}}
+          whileInView={{y: -800, opacity: 1}}
           viewport={{
-            margin: '100px',
-            once: true,
+            margin: '300px',
           }}
-          transition={{duration: 0.8, ease: 'easeOut'}}
+          transition={{duration: 1.5, ease: 'easeOut'}}
         >
           <Image
             src={clouds}
@@ -109,21 +108,22 @@ export default function Home() {
             className=" left-0 w-full h-auto object-cover pointer-events-none z-20"
           />
 
-          <div className=" top-1/2 left-1/2 bg-white mt-[-1rem] z-20 container mx-auto px-4 md:px-8 lg:px-16">
-            <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
+          <section className="top-1/2 h-auto w-full bg-white mt-[-1rem] z-20 px-4 sm:px-8 md:px-16 lg:px-32 xl:px-64 py-8">
+            <div className="flex flex-col w-full lg:flex-row items-center gap-8 lg:gap-16">
               {/* Hero Image */}
               <motion.div
-                initial={{opacity: 0, y: -100}}
+                initial={{opacity: 0, y: 100}}
                 whileInView={{opacity: 1, y: 0}}
+                viewport={{once: true}}
                 transition={{duration: 0.8, ease: 'easeOut'}}
-                className="flex-shrink-0"
+                className="flex-shrink-0 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-xl xl:max-w-2xl"
               >
                 <Image
                   src={heroPic}
                   alt="heroPic"
-                  width={720}
+                  width={1080}
                   height={720}
-                  className="w-full max-w-md lg:max-w-lg h-auto"
+                  className="w-full h-auto"
                 />
               </motion.div>
 
@@ -138,20 +138,20 @@ export default function Home() {
                   viewport={{once: true}}
                 >
                   <h3
-                    className={`${myFontBold.className} text-2xl md:text-3xl lg:text-4xl text-primary font-black mb-4`}
+                    className={`${myFontBold.className} text-xl sm:text-2xl md:text-3xl lg:text-4xl text-primary font-black mb-1`}
                   >
                     بارگذاری سریع و ساده پروژه‌ها
                   </h3>
-                  <div className="flex justify-center lg:justify-end mb-4">
+                  <div className="flex justify-center lg:justify-end mb-2">
                     <Image
                       src={line}
                       alt="line"
                       width={100}
                       height={20}
-                      className="h-4 w-[30rem]"
+                      className="h-4 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-2xl"
                     />
                   </div>
-                  <p className="text-base md:text-lg lg:text-xl text-primary ">
+                  <p className="text-lg sm:text-base md:text-lg lg:text-xl text-primary ">
                     دانشجویان می‌توانند پروژه‌های خود را تنها با چند کلیک آپلود
                     کرده و وضعیت آن را لحظه‌به‌لحظه پیگیری کنند.
                   </p>
@@ -166,20 +166,20 @@ export default function Home() {
                   viewport={{once: true}}
                 >
                   <h3
-                    className={`${myFontBold.className} text-2xl md:text-3xl lg:text-4xl text-primary font-black mb-4`}
+                    className={`${myFontBold.className} text-xl sm:text-2xl md:text-3xl lg:text-4xl text-primary font-black mb-1`}
                   >
                     صرفه‌جویی در زمان و کاغذبازی
                   </h3>
-                  <div className="flex justify-center lg:justify-end mb-4">
+                  <div className="flex justify-center lg:justify-end mb-2">
                     <Image
                       src={line}
                       alt="line"
-                      width={10}
+                      width={100}
                       height={20}
-                      className="h-4 w-[30rem]"
+                      className="h-4 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-2xl"
                     />
                   </div>
-                  <p className="text-base md:text-lg lg:text-xl text-primary ">
+                  <p className="text-lg sm:text-base md:text-lg lg:text-xl text-primary ">
                     دیگر نیازی به ارسال دستی فایل‌ها یا پیگیری‌های حضوری نیست؛
                     همه‌چیز آنلاین و در دسترس است.
                   </p>
@@ -194,27 +194,34 @@ export default function Home() {
                   viewport={{once: true}}
                 >
                   <h3
-                    className={`${myFontBold.className} text-2xl md:text-3xl lg:text-4xl text-primary font-black mb-4`}
+                    className={`${myFontBold.className} text-xl sm:text-2xl md:text-3xl lg:text-4xl text-primary font-black mb-1`}
                   >
                     افزایش شفافیت و کاهش خطا
                   </h3>
-                  <div className="flex justify-center lg:justify-end mb-4">
+                  <div className="flex justify-center lg:justify-end mb-2">
                     <Image
                       src={line}
                       alt="line"
                       width={100}
                       height={20}
-                      className="h-4 w-[30rem]"
+                      className="h-4 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-2xl"
                     />
                   </div>
-                  <p className="text-base md:text-lg lg:text-xl text-primary ">
+                  <p className="text-lg sm:text-base md:text-lg lg:text-xl text-primary mb-10">
                     تمام مراحل ثبت، بررسی و تأیید پروژه‌ها به‌صورت دیجیتال ثبت
                     می‌شود تا از فراموشی یا اشتباهات جلوگیری شود.
                   </p>
                 </motion.div>
               </div>
             </div>
-          </div>
+          </section>
+          <Image
+            src={clouds}
+            width={1920}
+            height={1080}
+            alt="clouds"
+            className=" rotate-180 w-full h-auto object-cover pointer-events-none z-20"
+          />
         </motion.div>
       </section>
     </div>
