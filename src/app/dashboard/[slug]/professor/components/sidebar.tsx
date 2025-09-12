@@ -28,9 +28,7 @@ export default function Sidebar({
       href: `/dashboard/${user?.id}/professor/classrooms`,
     },
     {id: 'projects', name: 'پروژه‌های دانشجویی', icon: '📁'},
-    {id: 'evaluations', name: 'ارزیابی پروژه‌ها', icon: '📝'},
     {id: 'students', name: 'دانشجویان', icon: '👨‍🎓'},
-    {id: 'courses', name: 'دروس', icon: '📚'},
     {id: 'settings', name: 'تنظیمات', icon: '⚙️'},
   ];
 

@@ -3,6 +3,7 @@
 import {useState, useEffect, useCallback} from 'react';
 import {useAuth} from '@/contexts/AuthContext';
 import Link from 'next/link';
+import {toast} from 'sonner';
 
 type Assignment = {
   id: number;
@@ -99,13 +100,13 @@ export default function StudentClassroomsPage() {
         setShowJoinForm(false);
         fetchClassrooms();
         fetchAssignments();
-        alert('با موفقیت به کلاس پیوستید!');
+        toast.success('با موفقیت به کلاس پیوستید!');
       } else {
-        alert('خطا در پیوستن به کلاس: ' + data.error);
+        toast.error('خطا در پیوستن به کلاس: ' + data.error);
       }
     } catch (error) {
       console.error('Error joining classroom:', error);
-      alert('خطا در پیوستن به کلاس');
+      toast.error('خطا در پیوستن به کلاس');
     }
   };
 

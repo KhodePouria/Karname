@@ -4,6 +4,7 @@ import {useState, useEffect, useCallback} from 'react';
 import {useAuth} from '@/contexts/AuthContext';
 import {useParams} from 'next/navigation';
 import Link from 'next/link';
+import {toast} from 'sonner';
 
 type Assignment = {
   id: number;
@@ -103,17 +104,17 @@ export default function ClassroomDetailPage() {
         setFormData({title: '', description: '', dueDate: ''});
         setShowCreateForm(false);
       } else {
-        alert('خطا در ایجاد تکلیف: ' + data.error);
+        toast.error('خطا در ایجاد تکلیف');
       }
     } catch (error) {
       console.error('Error creating assignment:', error);
-      alert('خطا در ایجاد تکلیف');
+      toast.error('خطا در ایجاد تکلیف');
     }
   };
 
   const copyJoinCode = (joinCode: string) => {
     navigator.clipboard.writeText(joinCode);
-    alert('کد پیوستن کپی شد!');
+    toast.success('کد پیوستن کپی شد!');
   };
 
   if (!classroom) {

@@ -45,9 +45,9 @@ export default function ProfessorDashboard() {
             <h1 className="text-xl font-bold text-gray-800">
               {activeTab === 'dashboard' && 'داشبورد'}
               {activeTab === 'projects' && 'پروژه‌های دانشجویی'}
-              {activeTab === 'evaluations' && 'ارزیابی پروژه‌ها'}
+
               {activeTab === 'students' && 'دانشجویان'}
-              {activeTab === 'courses' && 'دروس'}
+
               {activeTab === 'settings' && 'تنظیمات'}
             </h1>
             <button
@@ -92,9 +92,9 @@ export default function ProfessorDashboard() {
               <h1 className="text-2xl lg:text-3xl font-bold text-gray-800">
                 {activeTab === 'dashboard' && 'داشبورد'}
                 {activeTab === 'projects' && 'پروژه‌های دانشجویی'}
-                {activeTab === 'evaluations' && 'ارزیابی پروژه‌ها'}
+
                 {activeTab === 'students' && 'دانشجویان'}
-                {activeTab === 'courses' && 'دروس'}
+
                 {activeTab === 'settings' && 'تنظیمات'}
               </h1>
             </div>
@@ -105,9 +105,7 @@ export default function ProfessorDashboard() {
                 {[
                   {id: 'dashboard', label: 'داشبورد', icon: '📊'},
                   {id: 'projects', label: 'پروژه‌ها', icon: '📁'},
-                  {id: 'evaluations', label: 'ارزیابی', icon: '✅'},
                   {id: 'students', label: 'دانشجویان', icon: '👥'},
-                  {id: 'courses', label: 'دروس', icon: '📚'},
                   {id: 'settings', label: 'تنظیمات', icon: '⚙️'},
                 ].map((tab) => (
                   <button

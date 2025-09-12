@@ -5,7 +5,7 @@ import {AuthProvider} from '@/contexts/AuthContext';
 import Image from 'next/image';
 import logo from './public/Logo.png';
 import Link from 'next/link';
-
+import {Toaster} from '@/components/ui/sonner';
 import Loginbtn from '@/components/Loginbtn';
 
 const myFont = localFont({
@@ -41,6 +41,7 @@ export default function RootLayout({
             <Loginbtn />
           </header>
           {children}
+          <Toaster position="top-center" duration={2000} />
         </AuthProvider>
         <footer
           className={` bg-gray-900 text-white py-8 px-4 flex flex-col md:flex-row items-center justify-between`}

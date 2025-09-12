@@ -3,6 +3,7 @@
 import {useState, useEffect, useCallback} from 'react';
 import {useAuth} from '@/contexts/AuthContext';
 import Link from 'next/link';
+import {toast} from 'sonner';
 
 type Classroom = {
   id: number;
@@ -71,17 +72,17 @@ export default function ClassroomsPage() {
         setFormData({name: '', description: ''});
         setShowCreateForm(false);
       } else {
-        alert('خطا در ایجاد کلاس: ' + data.error);
+        toast.error(data.message || 'خطا در ایجاد کلاس');
       }
     } catch (error) {
       console.error('Error creating classroom:', error);
-      alert('خطا در ایجاد کلاس');
+      toast.error('خطا در ایجاد کلاس');
     }
   };
 
   const copyJoinCode = (joinCode: string) => {
     navigator.clipboard.writeText(joinCode);
-    alert('کد پیوستن کپی شد!');
+    toast.success('کد پیوستن کپی شد!');
   };
 
   if (!user) {
@@ -113,10 +114,12 @@ export default function ClassroomsPage() {
         {showCreateForm && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-xl p-6 w-full max-w-md">
-              <h2 className="text-xl font-bold mb-4">ایجاد کلاس جدید</h2>
+              <h2 className="text-xl font-bold mb-4 text-gray-800">
+                ایجاد کلاس جدید
+              </h2>
               <form onSubmit={handleCreateClassroom}>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-sm font-medium mb-2 text-gray-700">
                     نام کلاس *
                   </label>
                   <input
@@ -125,13 +128,13 @@ export default function ClassroomsPage() {
                     onChange={(e) =>
                       setFormData({...formData, name: e.target.value})
                     }
-                    className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full p-3 border text-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     placeholder="مثال: برنامه‌نویسی پیشرفته"
                     required
                   />
                 </div>
                 <div className="mb-6">
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-sm font-medium mb-2 text-gray-700">
                     توضیحات
                   </label>
                   <textarea
@@ -139,7 +142,7 @@ export default function ClassroomsPage() {
                     onChange={(e) =>
                       setFormData({...formData, description: e.target.value})
                     }
-                    className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full p-3 border text-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     rows={3}
                     placeholder="توضیح مختصری از کلاس..."
                   />

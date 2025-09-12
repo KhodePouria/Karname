@@ -109,7 +109,7 @@ export default function PendingEvaluations() {
             placeholder="جستجو..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pr-8 pl-3 py-2 border rounded-lg text-sm lg:w-64"
+            className="w-full pr-8 pl-3 py-2 border rounded-lg text-gray-600 text-sm lg:w-64"
           />
           <span className="absolute left-3 top-2.5 text-gray-400">🔍</span>
         </div>

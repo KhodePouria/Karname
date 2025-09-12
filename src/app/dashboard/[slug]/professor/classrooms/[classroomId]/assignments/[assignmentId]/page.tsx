@@ -4,6 +4,7 @@ import {useState, useEffect, useCallback} from 'react';
 import {useAuth} from '@/contexts/AuthContext';
 import {useParams} from 'next/navigation';
 import Link from 'next/link';
+import {toast} from '@/lib/toast';
 
 type Submission = {
   id: number;
@@ -118,13 +119,13 @@ export default function AssignmentDetailPage() {
         );
         setRatingModal({show: false, submission: null});
         setRatingData({rating: '', feedback: ''});
-        alert('امتیاز با موفقیت ثبت شد!');
+        toast.success('امتیاز با موفقیت ثبت شد!');
       } else {
-        alert('خطا در ثبت امتیاز: ' + data.error);
+        toast.error('خطا در ثبت امتیاز: ' + data.error);
       }
     } catch (error) {
       console.error('Error rating submission:', error);
-      alert('خطا در ثبت امتیاز');
+      toast.error('خطا در ثبت امتیاز');
     }
   };
 
@@ -313,12 +314,23 @@ export default function AssignmentDetailPage() {
 
                     <div className="flex flex-col gap-2 sm:flex-row">
                       <a
-                        href={submission.projectUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition-colors text-center"
+                        href={`/api/projects/${submission.id}/download`}
+                        className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition-colors text-center flex items-center gap-2 justify-center"
                       >
-                        مشاهده پروژه
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          />
+                        </svg>
+                        دانلود فایل ZIP
                       </a>
                       <button
                         onClick={() => openRatingModal(submission)}

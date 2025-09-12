@@ -4,6 +4,7 @@ import {useState, useEffect, useCallback} from 'react';
 import {useAuth} from '@/contexts/AuthContext';
 import {useParams} from 'next/navigation';
 import Link from 'next/link';
+import {toast} from '@/lib/toast';
 
 type Assignment = {
   id: number;
@@ -42,11 +43,8 @@ export default function StudentAssignmentPage() {
   const [submission, setSubmission] = useState<Submission | null>(null);
   const [loading, setLoading] = useState(true);
   const [showSubmitForm, setShowSubmitForm] = useState(false);
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    projectAddress: '',
-  });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (assignmentId) {
@@ -88,35 +86,43 @@ export default function StudentAssignmentPage() {
   const handleSubmitProject = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!selectedFile) {
+      toast.error('لطفا فایل ZIP پروژه خود را انتخاب کنید');
+      return;
+    }
+
+    if (!selectedFile.name.endsWith('.zip')) {
+      toast.error('فقط فایل‌های ZIP مجاز هستند');
+      return;
+    }
+
     try {
-      const response = await fetch('/api/projects', {
+      setUploading(true);
+
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      formData.append('studentId', user?.id?.toString() || '');
+
+      const response = await fetch(`/api/assignments/${assignmentId}/submit`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: formData.title,
-          description: formData.description,
-          projectAddress: formData.projectAddress,
-          assignmentId: parseInt(assignmentId),
-          senderId: user?.id,
-          publisherId: assignment?.classroom.professorId || 1,
-        }),
+        body: formData,
       });
 
       const data = await response.json();
 
       if (data.success) {
-        setFormData({title: '', description: '', projectAddress: ''});
+        setSelectedFile(null);
         setShowSubmitForm(false);
         fetchAssignmentAndSubmission();
-        alert('پروژه با موفقیت ارسال شد!');
+        toast.success('پروژه با موفقیت ارسال شد!');
       } else {
-        alert('خطا در ارسال پروژه: ' + data.error);
+        toast.error('خطا در ارسال پروژه: ' + data.error);
       }
     } catch (error) {
       console.error('Error submitting project:', error);
-      alert('خطا در ارسال پروژه');
+      toast.error('خطا در ارسال پروژه');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -205,69 +211,87 @@ export default function StudentAssignmentPage() {
         {showSubmitForm && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-              <h2 className="text-xl font-bold mb-4">ارسال پروژه</h2>
+              <h2 className="text-xl font-bold mb-4 text-gray-900">
+                ارسال پروژه
+              </h2>
               <form onSubmit={handleSubmitProject}>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium mb-2">
-                    عنوان پروژه *
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.title}
-                    onChange={(e) =>
-                      setFormData({...formData, title: e.target.value})
-                    }
-                    className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder="مثال: وب‌سایت فروشگاهی"
-                    required
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium mb-2">
-                    توضیحات پروژه *
-                  </label>
-                  <textarea
-                    value={formData.description}
-                    onChange={(e) =>
-                      setFormData({...formData, description: e.target.value})
-                    }
-                    className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                    rows={4}
-                    placeholder="توضیح کاملی از پروژه‌تان بنویسید..."
-                    required
-                  />
-                </div>
                 <div className="mb-6">
-                  <label className="block text-sm font-medium mb-2">
-                    آدرس پروژه *
+                  <label className="block text-sm font-medium mb-2 text-gray-800">
+                    فایل پروژه (ZIP) *
                   </label>
-                  <input
-                    type="url"
-                    value={formData.projectAddress}
-                    onChange={(e) =>
-                      setFormData({...formData, projectAddress: e.target.value})
-                    }
-                    className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder="https://example.com یا https://github.com/username/project"
-                    required
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    لینک مستقیم پروژه یا مخزن کد آن را وارد کنید
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                    <input
+                      type="file"
+                      accept=".zip,application/zip"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        setSelectedFile(file || null);
+                      }}
+                      className="hidden"
+                      id="file-upload"
+                      required
+                    />
+                    <label
+                      htmlFor="file-upload"
+                      className="cursor-pointer flex flex-col items-center"
+                    >
+                      <svg
+                        className="w-8 h-8 text-gray-400 mb-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                        />
+                      </svg>
+                      <span className="text-sm text-gray-600">
+                        {selectedFile
+                          ? selectedFile.name
+                          : 'کلیک کنید تا فایل ZIP را انتخاب کنید'}
+                      </span>
+                      <span className="text-xs text-gray-400 mt-1">
+                        حداکثر 100 مگابایت
+                      </span>
+                    </label>
+                  </div>
+                  {selectedFile && (
+                    <div className="mt-2 text-sm text-gray-600">
+                      <span>
+                        حجم فایل:{' '}
+                        {(selectedFile.size / (1024 * 1024)).toFixed(2)} مگابایت
+                      </span>
+                    </div>
+                  )}
+                  <p className="text-xs text-gray-500 mt-2">
+                    لطفا تمام فایل‌های پروژه خود را در یک فایل ZIP قرار دهید و
+                    آپلود کنید
                   </p>
                 </div>
                 <div className="flex gap-3 justify-end">
                   <button
                     type="button"
-                    onClick={() => setShowSubmitForm(false)}
+                    onClick={() => {
+                      setShowSubmitForm(false);
+                      setSelectedFile(null);
+                    }}
                     className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                    disabled={uploading}
                   >
                     انصراف
                   </button>
                   <button
                     type="submit"
-                    className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+                    disabled={uploading || !selectedFile}
+                    className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
-                    ارسال پروژه
+                    {uploading && (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    )}
+                    {uploading ? 'در حال آپلود...' : 'ارسال پروژه'}
                   </button>
                 </div>
               </form>
