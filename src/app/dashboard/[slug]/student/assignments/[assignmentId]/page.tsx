@@ -1,8 +1,8 @@
 'use client';
 
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useCallback} from 'react';
 import {useAuth} from '@/contexts/AuthContext';
-import {useParams, useRouter} from 'next/navigation';
+import {useParams} from 'next/navigation';
 import Link from 'next/link';
 
 type Assignment = {
@@ -36,7 +36,6 @@ type Submission = {
 export default function StudentAssignmentPage() {
   const {user} = useAuth();
   const params = useParams();
-  const router = useRouter();
   const assignmentId = params.assignmentId as string;
 
   const [assignment, setAssignment] = useState<Assignment | null>(null);
@@ -50,12 +49,13 @@ export default function StudentAssignmentPage() {
   });
 
   useEffect(() => {
-    if (assignmentId && user?.id) {
+    if (assignmentId) {
       fetchAssignmentAndSubmission();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assignmentId, user?.id]);
 
-  const fetchAssignmentAndSubmission = async () => {
+  const fetchAssignmentAndSubmission = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -83,7 +83,7 @@ export default function StudentAssignmentPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [assignmentId, user?.id]);
 
   const handleSubmitProject = async (e: React.FormEvent) => {
     e.preventDefault();

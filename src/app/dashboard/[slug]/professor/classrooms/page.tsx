@@ -1,6 +1,6 @@
 'use client';
 
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useCallback} from 'react';
 import {useAuth} from '@/contexts/AuthContext';
 import Link from 'next/link';
 
@@ -26,9 +26,10 @@ export default function ClassroomsPage() {
 
   useEffect(() => {
     fetchClassrooms();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
-  const fetchClassrooms = async () => {
+  const fetchClassrooms = useCallback(async () => {
     if (!user?.id) return;
 
     try {
@@ -44,7 +45,7 @@ export default function ClassroomsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.id]);
 
   const handleCreateClassroom = async (e: React.FormEvent) => {
     e.preventDefault();

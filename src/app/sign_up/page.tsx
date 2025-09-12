@@ -1,7 +1,5 @@
 'use client';
 import Image from 'next/image';
-import localFont from 'next/font/local';
-import {z} from 'zod';
 import line from '../public/Line.svg';
 import Link from 'next/link';
 import {useState} from 'react';
@@ -84,9 +82,9 @@ export default function SignUp() {
       } else {
         setError('خطا در ثبت‌نام. لطفا اطلاعات را بررسی کنید');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Signup error:', err);
-      setError(err?.message || 'خطا در ثبت‌نام. لطفا دوباره تلاش کنید');
+      setError(err instanceof Error ? err.message : 'خطا در ثبت‌نام. لطفا دوباره تلاش کنید');
     } finally {
       setLoading(false);
     }

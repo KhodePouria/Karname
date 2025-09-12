@@ -5,9 +5,10 @@ const prisma = new PrismaClient();
 
 export async function GET(
   request: NextRequest,
-  {params}: {params: {assignmentId: string}}
+  context: {params: Promise<{assignmentId: string}>}
 ) {
   try {
+    const params = await context.params;
     const assignmentId = params.assignmentId;
     const {searchParams} = new URL(request.url);
     const studentId = searchParams.get('studentId');

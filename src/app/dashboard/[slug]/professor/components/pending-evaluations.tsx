@@ -40,7 +40,9 @@ export default function PendingEvaluations() {
           if (data.success) {
             // Filter for pending projects and format
             const formattedProjects = data.projects
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               .filter((project: any) => !project.isGraded)
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               .map((project: any) => ({
                 id: project.id.toString(),
                 title: project.title,

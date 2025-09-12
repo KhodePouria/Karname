@@ -1,7 +1,6 @@
 'use client';
 import Image from 'next/image';
 import localFont from 'next/font/local';
-import logo from './public/Logo.png';
 import line from './public/Line.svg';
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';

@@ -1,6 +1,6 @@
 'use client';
 
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useCallback} from 'react';
 import {useAuth} from '@/contexts/AuthContext';
 import {useParams} from 'next/navigation';
 import Link from 'next/link';
@@ -43,9 +43,10 @@ export default function ClassroomDetailPage() {
       fetchClassroomDetails();
       fetchAssignments();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classroomId, user?.id]);
 
-  const fetchClassroomDetails = async () => {
+  const fetchClassroomDetails = useCallback(async () => {
     try {
       const response = await fetch(`/api/classrooms?professorId=${user?.id}`);
       const data = await response.json();
@@ -59,9 +60,9 @@ export default function ClassroomDetailPage() {
     } catch (error) {
       console.error('Error fetching classroom details:', error);
     }
-  };
+  }, [user?.id, classroomId]);
 
-  const fetchAssignments = async () => {
+  const fetchAssignments = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(
@@ -77,7 +78,7 @@ export default function ClassroomDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [classroomId]);
 
   const handleCreateAssignment = async (e: React.FormEvent) => {
     e.preventDefault();

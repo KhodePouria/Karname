@@ -100,11 +100,11 @@ export default function ProjectUpload() {
       } else {
         throw new Error(result.error || 'خطا در آپلود فایل');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Upload error:', error);
       setMessage({
         type: 'error',
-        text: error.message || 'خطا در ارسال پروژه. لطفا دوباره تلاش کنید',
+        text: error instanceof Error ? error.message : 'خطا در ارسال پروژه. لطفا دوباره تلاش کنید',
       });
     } finally {
       setLoading(false);

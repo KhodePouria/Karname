@@ -140,6 +140,7 @@ export async function GET(request: NextRequest) {
     }
 
     const formattedProjects = projects.map((project) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const formattedProject: any = {...project};
 
       if ('sender' in project && project.sender) {

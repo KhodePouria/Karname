@@ -8,13 +8,12 @@ import ProjectsList from './components/projects-list';
 import Notifications from './components/notifications';
 import Leaderboard from './components/leaderboard';
 
-import Image from 'next/image';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import {useAuth} from '@/contexts/AuthContext';
 
 export default function StudentDashboard() {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const {user, logout} = useAuth();
+  const {user} = useAuth();
 
   // Content based on active tab
   const renderContent = () => {

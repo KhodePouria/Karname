@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import {useState} from 'react';
-import Image from 'next/image';
 import {useAuth} from '@/contexts/AuthContext';
 
 interface SidebarProps {

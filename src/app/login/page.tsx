@@ -26,7 +26,7 @@ export default function LoginPage() {
       } else {
         setError('ایمیل یا رمز عبور اشتباه است');
       }
-    } catch (err) {
+    } catch {
       setError('خطا در ورود. دوباره تلاش کنید');
     } finally {
       setLoading(false);

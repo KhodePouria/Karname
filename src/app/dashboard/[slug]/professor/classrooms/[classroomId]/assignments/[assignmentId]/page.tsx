@@ -1,6 +1,6 @@
 'use client';
 
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useCallback} from 'react';
 import {useAuth} from '@/contexts/AuthContext';
 import {useParams} from 'next/navigation';
 import Link from 'next/link';
@@ -45,14 +45,7 @@ export default function AssignmentDetailPage() {
     feedback: '',
   });
 
-  useEffect(() => {
-    if (assignmentId) {
-      fetchAssignmentDetails();
-      fetchSubmissions();
-    }
-  }, [assignmentId, user?.id]);
-
-  const fetchAssignmentDetails = async () => {
+  const fetchAssignmentDetails = useCallback(async () => {
     try {
       const response = await fetch(`/api/assignments/${assignmentId}`);
       const data = await response.json();
@@ -63,9 +56,9 @@ export default function AssignmentDetailPage() {
     } catch (error) {
       console.error('Error fetching assignment details:', error);
     }
-  };
+  }, [assignmentId]);
 
-  const fetchSubmissions = async () => {
+  const fetchSubmissions = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(
@@ -81,7 +74,14 @@ export default function AssignmentDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [assignmentId]);
+
+  useEffect(() => {
+    if (assignmentId) {
+      fetchAssignmentDetails();
+      fetchSubmissions();
+    }
+  }, [assignmentId, user?.id, fetchAssignmentDetails, fetchSubmissions]);
 
   const handleRateSubmission = async (e: React.FormEvent) => {
     e.preventDefault();

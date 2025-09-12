@@ -70,7 +70,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
       } else {
         throw new Error(data.error || 'خطا در ورود');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Login error:', error);
       throw error;
     }
@@ -95,7 +95,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
       } else {
         throw new Error(data.error || 'خطا در ثبت‌نام');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Signup error:', error);
       throw error;
     }

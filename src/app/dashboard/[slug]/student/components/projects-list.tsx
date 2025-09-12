@@ -32,6 +32,7 @@ export default function ProjectsList() {
 
         if (data.success) {
           // Convert API data to match component structure
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const formattedProjects = data.projects.map((project: any) => ({
             id: project.id.toString(),
             title: project.title,

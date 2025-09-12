@@ -1,6 +1,5 @@
 'use client';
 import Image from 'next/image';
-import logo from '../public/Logo.png';
 import line from '../public/Line.svg';
 import Link from 'next/link';
 import {useState} from 'react';
@@ -27,8 +26,8 @@ export default function SignIn() {
       if (success) {
         router.push('/dashboard/' + email);
       }
-    } catch (err: any) {
-      setError(err?.message || 'خطا در ورود. دوباره تلاش کنید');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'خطا در ورود. دوباره تلاش کنید');
     } finally {
       setLoading(false);
     }

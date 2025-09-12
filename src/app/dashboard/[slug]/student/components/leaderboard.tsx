@@ -81,7 +81,7 @@ export default function Leaderboard() {
             </tr>
           </thead>
           <tbody>
-            {leaderboard.map((entry, index) => {
+            {leaderboard.map((entry) => {
               const isCurrentUser = entry.id === user?.id;
               const isTopThree = entry.rank <= 3;
 
