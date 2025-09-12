@@ -1,12 +1,11 @@
 import Image from 'next/image';
 import localFont from 'next/font/local';
-import logo from './public/Logo.png';
+
 import HeroSection from './components/hero';
 import line from './public/Line.svg';
 import Features from './components/features';
 import LenisComponent from './components/lenis';
 
-import Link from 'next/link';
 const myFontBold = localFont({
   src: './assets/fonts/Kalameh-Bold.ttf',
 });
@@ -16,30 +15,7 @@ export default function Home() {
     <>
       <div className="flex flex-col min-h-screen">
         <LenisComponent />
-        <header className="flex flex-row w-full h-fit bg-[#FFFFFF] shadow-lg sticky top-0 z-50 items-center justify-between px-4 py-2">
-          <Image
-            src={logo}
-            alt="logo"
-            width={60}
-            height={60}
-            className="object-contain"
-          />
 
-          <div className="flex flex-row gap-3">
-            <Link
-              href={'/sign_in'}
-              className="flex justify-center items-center bg-primary rounded-xl text-secondary hover:bg-[#526a9b] hover:cursor-pointer transition-all px-6 py-1"
-            >
-              <span className="text-lg font-black select-none mb-2">ورود</span>
-            </Link>
-            <Link
-              href={'/sign_up'}
-              className="flex justify-center items-center bg-white rounded-xl text-primary border border-primary hover:cursor-pointer hover:bg-primary hover:text-[#e6ebf7] transition-all px-4 py-1"
-            >
-              <span className="text-lg font-black select-none mb-2">عضویت</span>
-            </Link>
-          </div>
-        </header>
         {/* hero section */}
         <HeroSection />
         <Features />

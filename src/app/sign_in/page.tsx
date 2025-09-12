@@ -1,19 +1,38 @@
 'use client';
 import Image from 'next/image';
-import localFont from 'next/font/local';
 import logo from '../public/Logo.png';
 import line from '../public/Line.svg';
 import Link from 'next/link';
 import {useState} from 'react';
-
-const myFontBold = localFont({
-  src: '../assets/fonts/Kalameh-Bold.ttf',
-});
+import {useAuth} from '@/contexts/AuthContext';
+import {useRouter} from 'next/navigation';
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const {login} = useAuth();
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      const success = await login(email, password);
+      if (success) {
+        router.push('/dashboard/' + email);
+      }
+    } catch (err: any) {
+      setError(err?.message || 'خطا در ورود. دوباره تلاش کنید');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F7FFF7] to-white flex items-center justify-center p-4">
@@ -21,9 +40,7 @@ export default function SignIn() {
         {/* Left Side - Branding */}
         <div className="text-center lg:text-right space-y-8 animate-slideUp">
           <div className="space-y-6">
-            <h2
-              className={`${myFontBold.className} text-2xl lg:text-3xl text-primary font-black`}
-            >
+            <h2 className={` text-2xl lg:text-3xl text-primary font-black`}>
               خوش آمدید!
             </h2>
             <div className="flex justify-center lg:justify-start">
@@ -69,14 +86,14 @@ export default function SignIn() {
           <div className="bg-white rounded-2xl shadow-2xl p-8 lg:p-10">
             <div className="text-center mb-8">
               <h3
-                className={`${myFontBold.className} text-2xl lg:text-3xl text-primary font-black mb-4`}
+                className={` text-2xl lg:text-3xl text-primary font-black mb-4`}
               >
                 ورود به حساب کاربری
               </h3>
               <p className="text-[#556d9c]">اطلاعات خود را وارد کنید</p>
             </div>
 
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSubmit}>
               {/* Email Field */}
               <div className="space-y-2">
                 <label
@@ -145,12 +162,20 @@ export default function SignIn() {
                 </label>
               </div>
 
+              {/* Error Message */}
+              {error && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded text-right">
+                  {error}
+                </div>
+              )}
+
               {/* Login Button */}
               <button
                 type="submit"
-                className="w-full bg-primary hover:bg-[#526a9b] text-secondary font-black text-lg py-3 rounded-xl transition-all transform hover:scale-105 shadow-lg hover:cursor-pointer"
+                disabled={loading}
+                className="w-full bg-primary hover:bg-[#526a9b] text-secondary font-black text-lg py-3 rounded-xl transition-all transform hover:scale-105 shadow-lg hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                ورود
+                {loading ? 'در حال ورود...' : 'ورود'}
               </button>
 
               {/* Divider */}

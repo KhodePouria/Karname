@@ -14,35 +14,82 @@ datasource db {
 model Student {
   id       Int    @id @default(autoincrement())
   email    String @unique
-  Snumber  Int    @unique
+  Snumber  String @unique
   Fname    String
   Lname    String
   major    String
   year     Int
   password String
 
-  projects Project[]
+  projects         Project[]
+  classroomMembers ClassroomMember[]
 }
 
 model Professor {
-  id       Int       @id @default(autoincrement())
-  email    String    @unique
-  Pnumber  Int       @unique
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  Pnumber  String @unique
   Fname    String
   Lname    String
   password String
+
+  projects   Project[]
+  classrooms Classroom[]
+}
+
+model Classroom {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  joinCode    String    @unique
+  professor   Professor @relation(fields: [professorId], references: [id])
+  professorId Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  members     ClassroomMember[]
+  assignments Assignment[]
+}
+
+model ClassroomMember {
+  id          Int       @id @default(autoincrement())
+  student     Student   @relation(fields: [studentId], references: [id])
+  studentId   Int
+  classroom   Classroom @relation(fields: [classroomId], references: [id])
+  classroomId Int
+  joinedAt    DateTime  @default(now())
+
+  @@unique([studentId, classroomId])
+}
+
+model Assignment {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  classroom   Classroom @relation(fields: [classroomId], references: [id])
+  classroomId Int
+  dueDate     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
   projects Project[]
 }
 
 model Project {
-  id             Int       @id @default(autoincrement())
+  id             Int         @id @default(autoincrement())
   title          String
   description    String
-  sender         Student   @relation(fields: [senderId], references: [id])
-  publisher      Professor @relation(fields: [publisherId], references: [id])
+  sender         Student     @relation(fields: [senderId], references: [id])
+  publisher      Professor   @relation(fields: [publisherId], references: [id])
   publisherId    Int
+  assignment     Assignment? @relation(fields: [assignmentId], references: [id])
+  assignmentId   Int?
   senderId       Int
   projectAddress String
-  publishedDate  DateTime  @default(now())
+  publishedDate  DateTime    @default(now())
   sendDate       DateTime
+  rating         Float? // Rating out of 20
+  feedback       String? // Professor's feedback
+  isGraded       Boolean     @default(false)
+  gradedAt       DateTime?
 }
