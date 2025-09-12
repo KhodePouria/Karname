@@ -41,7 +41,7 @@ export default function StudentClassroomsPage() {
       fetchClassrooms();
       fetchAssignments();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
   const fetchClassrooms = useCallback(async () => {

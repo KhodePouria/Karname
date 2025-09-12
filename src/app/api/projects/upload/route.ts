@@ -1,5 +1,5 @@
 import {NextResponse} from 'next/server';
-import {PrismaClient} from '@/generated/prisma';
+import {PrismaClient} from '@prisma/client';
 import path from 'path';
 import {writeFile} from 'fs/promises';
 import {mkdir} from 'fs/promises';

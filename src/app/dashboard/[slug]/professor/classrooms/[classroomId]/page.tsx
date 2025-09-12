@@ -43,7 +43,7 @@ export default function ClassroomDetailPage() {
       fetchClassroomDetails();
       fetchAssignments();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classroomId, user?.id]);
 
   const fetchClassroomDetails = useCallback(async () => {

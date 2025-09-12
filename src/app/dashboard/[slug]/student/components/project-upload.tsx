@@ -104,7 +104,10 @@ export default function ProjectUpload() {
       console.error('Upload error:', error);
       setMessage({
         type: 'error',
-        text: error instanceof Error ? error.message : 'خطا در ارسال پروژه. لطفا دوباره تلاش کنید',
+        text:
+          error instanceof Error
+            ? error.message
+            : 'خطا در ارسال پروژه. لطفا دوباره تلاش کنید',
       });
     } finally {
       setLoading(false);

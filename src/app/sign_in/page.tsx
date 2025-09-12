@@ -27,7 +27,9 @@ export default function SignIn() {
         router.push('/dashboard/' + email);
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'خطا در ورود. دوباره تلاش کنید');
+      setError(
+        err instanceof Error ? err.message : 'خطا در ورود. دوباره تلاش کنید'
+      );
     } finally {
       setLoading(false);
     }

@@ -52,7 +52,7 @@ export default function StudentAssignmentPage() {
     if (assignmentId) {
       fetchAssignmentAndSubmission();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assignmentId, user?.id]);
 
   const fetchAssignmentAndSubmission = useCallback(async () => {

@@ -84,7 +84,11 @@ export default function SignUp() {
       }
     } catch (err: unknown) {
       console.error('Signup error:', err);
-      setError(err instanceof Error ? err.message : 'خطا در ثبت‌نام. لطفا دوباره تلاش کنید');
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'خطا در ثبت‌نام. لطفا دوباره تلاش کنید'
+      );
     } finally {
       setLoading(false);
     }

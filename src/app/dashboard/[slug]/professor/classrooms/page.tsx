@@ -26,7 +26,7 @@ export default function ClassroomsPage() {
 
   useEffect(() => {
     fetchClassrooms();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
   const fetchClassrooms = useCallback(async () => {
