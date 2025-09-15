@@ -20,6 +20,37 @@ export default function ProjectsList() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('all');
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const openModal = (p: Project) => {
+    setSelectedProject(p);
+    setIsModalOpen(true);
+  };
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedProject(null);
+  };
+  const copyDownloadLink = async () => {
+    if (!selectedProject) return;
+    try {
+      await navigator.clipboard.writeText(
+        `${window.location.origin}/api/projects/${selectedProject.id}/download`
+      );
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1200);
+    } catch {
+      // ignore
+    }
+  };
+
+  useEffect(() => {
+    if (!isModalOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && closeModal();
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [isModalOpen]);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -88,30 +119,31 @@ export default function ProjectsList() {
     );
   };
 
-  // Star rating component
-  const StarRating = ({rating}: {rating: number | null}) => {
-    if (rating === null)
-      return <span className="text-gray-400">هنوز امتیازی داده نشده</span>;
-
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 !== 0;
-
+  // Replace star rating with a numeric badge out of 20
+  const ScoreBadge20 = ({value}: {value: number | null}) => {
+    if (value === null) return <span className="text-gray-400">—</span>;
+    const clamp20 = (r: number) => Math.max(0, Math.min(20, r));
+    const score = clamp20(value);
+    const rounded = Math.round(score * 10) / 10; // one decimal
+    const color =
+      score >= 16
+        ? 'bg-green-100 text-green-800'
+        : score >= 12
+          ? 'bg-yellow-100 text-yellow-800'
+          : 'bg-red-100 text-red-800';
     return (
-      <div className="flex items-center">
-        {Array(5)
-          .fill(0)
-          .map((_, index) => (
-            <span key={index} className="text-yellow-400">
-              {index < fullStars
-                ? '★'
-                : index === fullStars && hasHalfStar
-                  ? '⯪'
-                  : '☆'}
-            </span>
-          ))}
-        <span className="ml-1 text-sm text-gray-600">({rating})</span>
-      </div>
+      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${color}`}>
+        {`${rounded % 1 === 0 ? Math.trunc(rounded) : rounded}/20`}
+      </span>
     );
+  };
+
+  const formatDate = (d: string) => {
+    try {
+      return new Date(d).toLocaleString('fa-IR');
+    } catch {
+      return d;
+    }
   };
 
   return (
@@ -189,12 +221,17 @@ export default function ProjectsList() {
                     <StatusBadge status={project.status} />
                   </td>
                   <td className="px-4 py-3">
-                    <StarRating rating={project.rating} />
+                    <ScoreBadge20 value={project.rating} />
                   </td>
                   <td className="px-4 py-3">
-                    <button className="text-primary hover:underline text-sm">
-                      مشاهده
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => openModal(project)}
+                        className="text-primary hover:underline text-sm"
+                      >
+                        مشاهده
+                      </button>
+                    </div>
                     {project.feedback && (
                       <div className="text-xs text-gray-500 mt-1">
                         بازخورد:{' '}
@@ -208,6 +245,132 @@ export default function ProjectsList() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {isModalOpen && selectedProject && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"
+            onClick={closeModal}
+            aria-hidden="true"
+          />
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="relative z-10 w-full max-w-xl bg-white rounded-2xl shadow-2xl p-0 overflow-hidden animate-[fadeIn_120ms_ease-out]"
+          >
+            {/* Header */}
+            <div className="px-6 pt-6 pb-4 border-b border-gray-100 flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/40 text-primary flex items-center justify-center">
+                  📁
+                </div>
+                <div>
+                  <h3 className="text-base md:text-lg font-bold text-primary mb-0.5">
+                    {selectedProject.title}
+                  </h3>
+                  <div className="text-xs text-gray-500">
+                    استاد: {selectedProject.professor}
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={closeModal}
+                className="text-gray-500 hover:text-gray-700 p-2"
+                aria-label="بستن"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="px-6 py-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div className="text-sm text-gray-700">
+                  <div className="text-gray-500 mb-1">تاریخ ارسال</div>
+                  <div>{formatDate(selectedProject.submissionDate)}</div>
+                </div>
+                <div className="text-sm text-gray-700">
+                  <div className="text-gray-500 mb-1">وضعیت</div>
+                  <div className="flex items-center gap-2">
+                    <StatusBadge status={selectedProject.status} />
+                    <ScoreBadge20 value={selectedProject.rating} />
+                  </div>
+                </div>
+              </div>
+
+              {selectedProject.description && (
+                <div className="mt-2">
+                  <div className="text-sm text-gray-500 mb-1">توضیحات</div>
+                  <div className="text-sm text-gray-800 leading-6 max-h-48 overflow-y-auto whitespace-pre-wrap rounded-lg border border-gray-100 p-3 bg-gray-50/50">
+                    {selectedProject.description}
+                  </div>
+                </div>
+              )}
+
+              {selectedProject.feedback && (
+                <div className="mt-4">
+                  <div className="text-sm text-gray-500 mb-1">
+                    بازخورد استاد
+                  </div>
+                  <div className="text-sm text-gray-800 leading-6 rounded-lg border border-green-100 p-3 bg-green-50/50">
+                    {selectedProject.feedback}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 pb-6 pt-4 border-t border-gray-100 flex items-center justify-end gap-2">
+              <button
+                onClick={copyDownloadLink}
+                className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50"
+                title="کپی لینک دانلود"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="w-4 h-4"
+                >
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                </svg>
+                {copied ? 'کپی شد!' : 'کپی لینک'}
+              </button>
+              <a
+                href={`/api/projects/${selectedProject.id}/download`}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm hover:bg-primary/90 transition-colors"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="w-4 h-4"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                دانلود پروژه
+              </a>
+              <button
+                onClick={closeModal}
+                className="px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50"
+              >
+                بستن
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

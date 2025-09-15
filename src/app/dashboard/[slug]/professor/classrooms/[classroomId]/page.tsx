@@ -5,6 +5,18 @@ import {useAuth} from '@/contexts/AuthContext';
 import {useParams} from 'next/navigation';
 import Link from 'next/link';
 import {toast} from 'sonner';
+import dynamic from 'next/dynamic';
+// Persian calendar + locale for the date picker
+import persian from 'react-date-object/calendars/persian';
+import persian_fa from 'react-date-object/locales/persian_fa';
+
+const DatePicker = dynamic(() => import('react-multi-date-picker'), {
+  ssr: false,
+});
+const TimePicker = dynamic(
+  () => import('react-multi-date-picker/plugins/time_picker'),
+  {ssr: false}
+);
 
 type Assignment = {
   id: number;
@@ -38,6 +50,7 @@ export default function ClassroomDetailPage() {
     description: '',
     dueDate: '',
   });
+  const [dueDateValue, setDueDateValue] = useState<any | null>(null);
 
   useEffect(() => {
     if (classroomId) {
@@ -85,6 +98,12 @@ export default function ClassroomDetailPage() {
     e.preventDefault();
 
     try {
+      // Compose final ISO from selected Jalali date & time (picker plugin)
+      const finalDue: string | null =
+        dueDateValue && typeof dueDateValue.toDate === 'function'
+          ? (dueDateValue.toDate() as Date).toISOString()
+          : null;
+
       const response = await fetch('/api/assignments', {
         method: 'POST',
         headers: {
@@ -93,7 +112,7 @@ export default function ClassroomDetailPage() {
         body: JSON.stringify({
           ...formData,
           classroomId,
-          dueDate: formData.dueDate || null,
+          dueDate: finalDue,
         }),
       });
 
@@ -102,6 +121,7 @@ export default function ClassroomDetailPage() {
       if (data.success) {
         setAssignments([data.assignment, ...assignments]);
         setFormData({title: '', description: '', dueDate: ''});
+        setDueDateValue(null);
         setShowCreateForm(false);
       } else {
         toast.error('خطا در ایجاد تکلیف');
@@ -216,16 +236,50 @@ export default function ClassroomDetailPage() {
                 </div>
                 <div className="mb-6">
                   <label className="block text-sm font-medium mb-2">
-                    مهلت تحویل (اختیاری)
+                    تاریخ و ساعت پایان (اختیاری)
                   </label>
-                  <input
-                    type="datetime-local"
-                    value={formData.dueDate}
-                    onChange={(e) =>
-                      setFormData({...formData, dueDate: e.target.value})
-                    }
-                    className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
+                  <div className="flex items-center gap-3">
+                    <DatePicker
+                      value={dueDateValue}
+                      onChange={(val: any) => {
+                        setDueDateValue(val);
+                        if (val && typeof val.toDate === 'function') {
+                          const iso = (val.toDate() as Date).toISOString();
+                          setFormData((prev) => ({...prev, dueDate: iso}));
+                        } else {
+                          setFormData((prev) => ({...prev, dueDate: ''}));
+                        }
+                      }}
+                      calendar={persian}
+                      locale={persian_fa}
+                      format="YYYY/MM/DD HH:mm"
+                      plugins={[
+                        // @ts-ignore
+                        <TimePicker key="tp" position="bottom" hideSeconds />,
+                      ]}
+                      calendarPosition="bottom-right"
+                      editable={false}
+                      inputClass="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-gray-700"
+                      placeholder="انتخاب تاریخ و ساعت پایان"
+                    />
+                    {dueDateValue && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setDueDateValue(null);
+                          setFormData((prev) => ({...prev, dueDate: ''}));
+                        }}
+                        className="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50"
+                      >
+                        پاک کردن
+                      </button>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    از تقویم شمسی تاریخ را انتخاب کنید و سپس ساعت را از پایین
+                    انتخاب کنید. ثانیه‌ها پنهان هستند و زمان به‌صورت 24 ساعته
+                    است.
+                  </p>
                 </div>
                 <div className="flex gap-3 justify-end">
                   <button

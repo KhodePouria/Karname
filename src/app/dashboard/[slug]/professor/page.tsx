@@ -7,6 +7,9 @@ import PendingEvaluations from './components/pending-evaluations';
 import ProjectEvaluations from './components/project-evaluations';
 import RecentActivities from './components/recent-activities';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import Allprojects from './components/all-projects';
+import AllStudents from './components/all-students';
+import Settings from './components/settings';
 
 export default function ProfessorDashboard() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -148,14 +151,7 @@ export default function ProfessorDashboard() {
             {/* Projects Content */}
             {activeTab === 'projects' && (
               <div className="bg-white rounded-xl shadow-md p-4 lg:p-6">
-                <h2 className="text-xl lg:text-2xl font-bold text-primary mb-4 lg:mb-6">
-                  پروژه‌های دانشجویی
-                </h2>
-                <p className="text-gray-600 text-sm lg:text-base">
-                  در این بخش می‌توانید تمامی پروژه‌های ارسال شده توسط دانشجویان
-                  را مشاهده کنید.
-                </p>
-                {/* Project list would go here */}
+                <Allprojects />
               </div>
             )}
 
@@ -169,13 +165,7 @@ export default function ProfessorDashboard() {
             {/* Students Content */}
             {activeTab === 'students' && (
               <div className="bg-white rounded-xl shadow-md p-4 lg:p-6">
-                <h2 className="text-xl lg:text-2xl font-bold text-primary mb-4 lg:mb-6">
-                  لیست دانشجویان
-                </h2>
-                <p className="text-gray-600 text-sm lg:text-base">
-                  در این بخش می‌توانید لیست دانشجویان و وضعیت پروژه‌های آن‌ها را
-                  مشاهده کنید.
-                </p>
+                <AllStudents />
                 {/* Students list would go here */}
               </div>
             )}
@@ -197,13 +187,7 @@ export default function ProfessorDashboard() {
             {/* Settings Content */}
             {activeTab === 'settings' && (
               <div className="bg-white rounded-xl shadow-md p-4 lg:p-6">
-                <h2 className="text-xl lg:text-2xl font-bold text-primary mb-4 lg:mb-6">
-                  تنظیمات
-                </h2>
-                <p className="text-gray-600 text-sm lg:text-base">
-                  در این بخش می‌توانید تنظیمات مربوط به پروفایل و ترجیحات خود را
-                  تغییر دهید.
-                </p>
+                <Settings />
                 {/* Settings form would go here */}
               </div>
             )}

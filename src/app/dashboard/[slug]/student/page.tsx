@@ -1,19 +1,82 @@
 'use client';
 
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import Sidebar from './components/sidebar';
 import StatsCards from './components/stats-cards';
-import ProjectUpload from './components/project-upload';
+import ClassRooms from './components/ClassRooms';
 import ProjectsList from './components/projects-list';
 import Notifications from './components/notifications';
 import Leaderboard from './components/leaderboard';
+import {toast} from 'sonner';
 
 import ProtectedRoute from '@/components/ProtectedRoute';
 import {useAuth} from '@/contexts/AuthContext';
 
 export default function StudentDashboard() {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const {user} = useAuth();
+  const {user, updateUser} = useAuth();
+
+  // Profile form state
+  const [saving, setSaving] = useState(false);
+  const [profile, setProfile] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    major: '',
+    year: '',
+    currentPassword: '',
+    newPassword: '',
+  });
+
+  useEffect(() => {
+    if (user) {
+      const [fn = '', ln = ''] = (user.name || '').split(' ');
+      setProfile({
+        firstName: fn,
+        lastName: ln,
+        email: user.email || '',
+        major: user.major || '',
+        year: typeof user.year === 'number' ? String(user.year) : '',
+        currentPassword: '',
+        newPassword: '',
+      });
+    }
+  }, [user]);
+
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user?.id) return;
+    try {
+      setSaving(true);
+      const res = await fetch('/api/profile', {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          id: user.id,
+          role: 'student',
+          firstName: profile.firstName,
+          lastName: profile.lastName,
+          email: profile.email,
+          major: profile.major,
+          year: profile.year ? parseInt(profile.year) : undefined,
+          currentPassword: profile.currentPassword || undefined,
+          newPassword: profile.newPassword || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        toast.error(data.error || 'خطا در به‌روزرسانی پروفایل');
+        return;
+      }
+      updateUser && updateUser(data.user);
+      toast.success('پروفایل با موفقیت به‌روزرسانی شد');
+      setProfile((p) => ({...p, currentPassword: '', newPassword: ''}));
+    } catch (err) {
+      toast.error('خطا در به‌روزرسانی پروفایل');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   // Content based on active tab
   const renderContent = () => {
@@ -24,11 +87,11 @@ export default function StudentDashboard() {
             <div className="mb-6">
               <StatsCards />
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div>
-                <ProjectUpload />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+              <div className="h-full">
+                <ClassRooms />
               </div>
-              <div>
+              <div className="h-full">
                 <Notifications />
               </div>
             </div>
@@ -44,23 +107,156 @@ export default function StudentDashboard() {
         return (
           <div className="bg-white rounded-xl shadow-md p-6">
             <h2 className="text-2xl font-bold text-primary mb-6">پروفایل من</h2>
-            <div className="flex flex-col items-center md:flex-row">
-              <div className="w-32 h-32 rounded-full bg-primary/20 flex items-center justify-center mb-4 md:mb-0">
-                <span className="text-4xl">👨‍🎓</span>
-              </div>
-              <div className="md:mr-8 text-center md:text-right">
-                <h3 className="text-xl font-bold text-gray-800 mb-2">
-                  {user?.name}
-                </h3>
-                <div className="flex flex-col gap-1 ">
-                  <p className="text-gray-600">دانشجوی {user?.major}</p>
-                  <p className="text-gray-600">
-                    شماره دانشجویی: {user?.studentNumber}
-                  </p>
-                  <p className="text-gray-600">سال ورودی: {user?.year}</p>
+            <form
+              onSubmit={handleSaveProfile}
+              className="grid grid-cols-1 md:grid-cols-2 gap-4"
+            >
+              <div className="md:col-span-2 flex items-center gap-4 pb-2">
+                <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
+                  <span className="text-2xl">👨‍🎓</span>
+                </div>
+                <div className="text-sm text-gray-500">
+                  <div>شماره دانشجویی: {user?.studentNumber}</div>
                 </div>
               </div>
-            </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">نام</label>
+                <input
+                  type="text"
+                  value={profile.firstName}
+                  onChange={(e) =>
+                    setProfile({...profile, firstName: e.target.value})
+                  }
+                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  نام خانوادگی
+                </label>
+                <input
+                  type="text"
+                  value={profile.lastName}
+                  onChange={(e) =>
+                    setProfile({...profile, lastName: e.target.value})
+                  }
+                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">ایمیل</label>
+                <input
+                  type="email"
+                  value={profile.email}
+                  onChange={(e) =>
+                    setProfile({...profile, email: e.target.value})
+                  }
+                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">رشته</label>
+                <input
+                  type="text"
+                  value={profile.major}
+                  onChange={(e) =>
+                    setProfile({...profile, major: e.target.value})
+                  }
+                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  سال ورود
+                </label>
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  min={1300}
+                  max={1600}
+                  value={profile.year}
+                  onChange={(e) =>
+                    setProfile({...profile, year: e.target.value})
+                  }
+                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+
+              <div className="md:col-span-2 border-t pt-4 mt-2">
+                <h3 className="font-semibold text-gray-800 mb-3">
+                  تغییر رمز عبور (اختیاری)
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">
+                      رمز عبور فعلی
+                    </label>
+                    <input
+                      type="password"
+                      value={profile.currentPassword}
+                      onChange={(e) =>
+                        setProfile({
+                          ...profile,
+                          currentPassword: e.target.value,
+                        })
+                      }
+                      className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      placeholder="برای تغییر رمز لازم است"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">
+                      رمز عبور جدید
+                    </label>
+                    <input
+                      type="password"
+                      value={profile.newPassword}
+                      onChange={(e) =>
+                        setProfile({...profile, newPassword: e.target.value})
+                      }
+                      className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      placeholder="اختیاری"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="md:col-span-2 flex justify-end gap-3 mt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const [fn = '', ln = ''] = (user?.name || '').split(' ');
+                    setProfile({
+                      firstName: fn,
+                      lastName: ln,
+                      email: user?.email || '',
+                      major: user?.major || '',
+                      year:
+                        typeof user?.year === 'number'
+                          ? String(user?.year)
+                          : '',
+                      currentPassword: '',
+                      newPassword: '',
+                    });
+                  }}
+                  className="px-4 py-2 border rounded-lg text-gray-700 hover:bg-gray-50"
+                  disabled={saving}
+                >
+                  بازنشانی
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 disabled:opacity-60"
+                  disabled={saving}
+                >
+                  {saving ? 'در حال ذخیره...' : 'ذخیره تغییرات'}
+                </button>
+              </div>
+            </form>
           </div>
         );
       default:
@@ -141,11 +337,6 @@ export default function StudentDashboard() {
                         پروژه‌های خود را مدیریت کنید و بازخوردهای اساتید را
                         مشاهده کنید.
                       </p>
-                    </div>
-                    <div className="mt-4 md:mt-0">
-                      <button className="bg-white text-primary px-4 py-2 rounded-lg font-bold hover:bg-white/90 transition-colors">
-                        پروژه جدید +
-                      </button>
                     </div>
                   </div>
                 </div>

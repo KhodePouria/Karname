@@ -15,12 +15,6 @@ export default function Sidebar({activeItem, onItemClick}: SidebarProps) {
 
   const menuItems = [
     {name: 'داشبورد', id: 'dashboard', icon: '📊'},
-    {
-      name: 'کلاس‌های من',
-      id: 'classrooms',
-      icon: '🎓',
-      href: `/dashboard/${user?.id}/student/classrooms`,
-    },
     {name: 'پروژه‌های من', id: 'projects', icon: '📁'},
     {name: 'جدول رتبه‌بندی', id: 'leaderboard', icon: '🏆'},
     {name: 'اعلانات', id: 'notifications', icon: '🔔'},
@@ -62,25 +56,6 @@ export default function Sidebar({activeItem, onItemClick}: SidebarProps) {
 
         <div className="space-y-1">
           {menuItems.map((item) => {
-            if (item.href) {
-              return (
-                <Link
-                  href={item.href}
-                  key={item.name}
-                  className={`w-full flex items-center p-2 rounded-lg transition-colors ${
-                    activeItem === item.id
-                      ? 'bg-primary text-white'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  <span className="text-lg">{item.icon}</span>
-                  {!collapsed && (
-                    <span className="mr-3 text-right">{item.name}</span>
-                  )}
-                </Link>
-              );
-            }
-
             return (
               <button
                 onClick={() => onItemClick(item.id)}

@@ -101,12 +101,20 @@ export default function ClassroomsPage() {
               </h1>
               <p className="text-gray-600 mt-1">مدیریت کلاس‌ها و تکالیف خود</p>
             </div>
-            <button
-              onClick={() => setShowCreateForm(true)}
-              className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
-            >
-              + ایجاد کلاس جدید
-            </button>
+            <div className="flex items-center gap-3">
+              <Link
+                href={`/dashboard/${user?.id}/professor`}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                بازگشت به داشبورد
+              </Link>
+              <button
+                onClick={() => setShowCreateForm(true)}
+                className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+              >
+                + ایجاد کلاس جدید
+              </button>
+            </div>
           </div>
         </div>
 

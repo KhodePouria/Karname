@@ -21,6 +21,7 @@ interface AuthContextType {
   signup: (userData: SignupData) => Promise<boolean>;
   logout: () => void;
   loading: boolean;
+  updateUser?: (update: Partial<User> | User) => void;
 }
 
 export interface SignupData {
@@ -108,8 +109,20 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
     window.location.href = '/';
   };
 
+  const updateUser = (update: Partial<User> | User) => {
+    setUser((prev) => {
+      const next = prev
+        ? {...prev, ...(update as Partial<User>)}
+        : (update as User);
+      localStorage.setItem('user', JSON.stringify(next));
+      return next;
+    });
+  };
+
   return (
-    <AuthContext.Provider value={{user, login, signup, logout, loading}}>
+    <AuthContext.Provider
+      value={{user, login, signup, logout, loading, updateUser}}
+    >
       {children}
     </AuthContext.Provider>
   );

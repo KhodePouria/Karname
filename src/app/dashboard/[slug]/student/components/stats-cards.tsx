@@ -1,36 +1,85 @@
 'use client';
 
+import {useEffect, useState} from 'react';
+import {useAuth} from '@/contexts/AuthContext';
+
 export default function StatsCards() {
-  const stats = [
+  const {user} = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    total: 0,
+    pending: 0,
+    reviewed: 0,
+    avg: 0,
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      if (!user?.id) return;
+      try {
+        setLoading(true);
+        const res = await fetch(`/api/projects?studentId=${user.id}`);
+        const data = await res.json();
+        if (data.success && Array.isArray(data.projects)) {
+          const projects = data.projects;
+          const total = projects.length;
+          const reviewed = projects.filter((p: any) => p.isGraded).length;
+          const pending = total - reviewed;
+          const rated = projects.filter(
+            (p: any) => p.rating !== null && p.rating !== undefined
+          );
+          const avg = rated.length
+            ? Math.round(
+                (rated.reduce((s: number, p: any) => s + (p.rating || 0), 0) /
+                  rated.length) *
+                  10
+              ) / 10
+            : 0;
+          setStats({total, pending, reviewed, avg});
+        } else {
+          setStats({total: 0, pending: 0, reviewed: 0, avg: 0});
+        }
+      } catch (e) {
+        setStats({total: 0, pending: 0, reviewed: 0, avg: 0});
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, [user?.id]);
+
+  const cards = [
     {
       title: 'کل پروژه‌ها',
-      value: '3',
+      value: stats.total,
       icon: '📁',
       color: 'bg-blue-100 text-blue-800',
     },
     {
       title: 'در انتظار بررسی',
-      value: '1',
+      value: stats.pending,
       icon: '⏳',
       color: 'bg-yellow-100 text-yellow-800',
     },
     {
       title: 'بررسی شده',
-      value: '2',
+      value: stats.reviewed,
       icon: '✅',
       color: 'bg-green-100 text-green-800',
     },
     {
       title: 'میانگین امتیاز',
-      value: '4.8',
+      value: `${stats.avg}`,
       icon: '⭐',
       color: 'bg-purple-100 text-purple-800',
+      hint: '/20',
     },
   ];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      {stats.map((stat, index) => (
+      {cards.map((stat, index) => (
         <div
           key={index}
           className="bg-white p-4 rounded-xl shadow-md flex items-center"
@@ -42,7 +91,14 @@ export default function StatsCards() {
           </div>
           <div className="mr-4">
             <div className="text-sm text-gray-500">{stat.title}</div>
-            <div className="text-2xl font-bold text-gray-700">{stat.value}</div>
+            <div className="flex items-baseline gap-1">
+              <div className="text-2xl font-bold text-gray-700">
+                {loading ? '—' : stat.value}
+              </div>
+              {stat.hint && !loading && (
+                <span className="text-xs text-gray-400">{stat.hint}</span>
+              )}
+            </div>
           </div>
         </div>
       ))}

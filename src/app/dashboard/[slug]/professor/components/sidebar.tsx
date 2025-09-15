@@ -58,10 +58,10 @@ export default function Sidebar({
             </div>
             <div className="text-center">
               <h3 className="font-bold text-gray-800">
-                {user?.name || 'دکتر رضایی'}
+                {user?.name || 'دکتر خضوعی'}
               </h3>
               <p className="text-xs text-gray-500">
-                استاد دانشکده مهندسی کامپیوتر
+                استاد دانشکده مهندسی {user?.major}
               </p>
             </div>
           </div>
