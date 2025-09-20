@@ -9,7 +9,6 @@ import {
   ChartBar,
   Folder,
   LogOut,
-  Presentation,
   Settings,
   User,
 } from 'lucide-react';
@@ -31,12 +30,6 @@ export default function Sidebar({
 
   const menuItems = [
     {id: 'dashboard', name: 'داشبورد', icon: <ChartBar />},
-    {
-      id: 'classrooms',
-      name: 'کلاس‌های درسی',
-      icon: <Presentation />,
-      href: `/dashboard/${user?.id}/professor/classrooms`,
-    },
     {id: 'projects', name: 'پروژه‌های دانشجویی', icon: <Folder />},
     {id: 'students', name: 'دانشجویان', icon: <User />},
     {id: 'settings', name: 'تنظیمات', icon: <Settings />},
@@ -79,23 +72,6 @@ export default function Sidebar({
 
         <div className="space-y-1">
           {menuItems.map((item) => {
-            if (item.href) {
-              return (
-                <Link
-                  href={item.href}
-                  key={item.id}
-                  className={`flex items-center p-2 rounded-lg w-full ${
-                    activeTab === item.id
-                      ? 'bg-primary text-white'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  <span className="text-lg">{item.icon}</span>
-                  {!isCollapsed && <span className="mr-3">{item.name}</span>}
-                </Link>
-              );
-            }
-
             return (
               <button
                 key={item.id}

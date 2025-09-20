@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import localFont from 'next/font/local';
-
+import Link from 'next/link';
 import HeroSection from './components/hero';
 import line from './public/Line.svg';
 import Features from './components/features-client-wrapper';
@@ -176,12 +176,12 @@ export default function Home() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <button className="bg-primary hover:bg-[#526a9b] text-secondary font-black text-lg md:text-xl px-8 md:px-12 py-3 md:py-4 rounded-xl transition-all transform hover:scale-105 shadow-lg">
+                <Link
+                  href="/sign_up"
+                  className="bg-primary hover:bg-[#526a9b] text-secondary font-black text-lg md:text-xl px-8 md:px-12 py-3 md:py-4 rounded-xl transition-all transform hover:scale-105 shadow-lg"
+                >
                   شروع کنید
-                </button>
-                <button className="bg-transparent border-2 border-primary hover:bg-primary hover:text-secondary text-primary font-black text-lg md:text-xl px-8 md:px-12 py-3 md:py-4 rounded-xl transition-all">
-                  بیشتر بدانید
-                </button>
+                </Link>
               </div>
             </div>
           </div>

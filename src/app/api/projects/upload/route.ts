@@ -1,10 +1,13 @@
 import {NextResponse} from 'next/server';
 import {PrismaClient} from '@prisma/client';
-import path from 'path';
-import {writeFile} from 'fs/promises';
-import {mkdir} from 'fs/promises';
+import {createClient} from '@supabase/supabase-js';
 
 const prisma = new PrismaClient();
+
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_ANON_KEY!
+);
 
 export async function POST(request: Request) {
   try {
@@ -14,8 +17,9 @@ export async function POST(request: Request) {
     const description = formData.get('description') as string;
     const file = formData.get('file') as File;
     const studentId = formData.get('studentId') as string;
+    const assignmentId = formData.get('assignmentId') as string;
 
-    if (!title || !description || !file || !studentId) {
+    if (!title || !description || !file || !studentId || !assignmentId) {
       return NextResponse.json(
         {success: false, error: 'تمام فیلدها الزامی هستند'},
         {status: 400}
@@ -39,60 +43,36 @@ export async function POST(request: Request) {
       );
     }
 
-    // Create uploads directory if it doesn't exist
-    const uploadsDir = path.join(process.cwd(), 'uploads', 'projects');
-    try {
-      await mkdir(uploadsDir, {recursive: true});
-    } catch {
-      // Directory might already exist
-    }
+    // Upload file to Supabase Storage
+    const filePath = `student-uploads/${Date.now()}-${file.name}`;
+    const {error: uploadError} = await supabase.storage
+      .from('projects')
+      .upload(filePath, file, {upsert: true});
 
-    // Generate unique filename
-    const timestamp = Date.now();
-    const originalName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-    const filename = `${studentId}_${timestamp}_${originalName}`;
-    const filepath = path.join(uploadsDir, filename);
-
-    // Save file to disk
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    await writeFile(filepath, buffer);
-
-    // Find student in database
-    const student = await prisma.student.findUnique({
-      where: {id: parseInt(studentId)},
-    });
-
-    if (!student) {
+    if (uploadError) {
       return NextResponse.json(
-        {success: false, error: 'دانشجوی مورد نظر یافت نشد'},
-        {status: 404}
-      );
-    }
-
-    // For now, we'll create a project without a specific professor
-    // You might want to modify this based on your needs
-    // We can either assign to a random professor or wait for manual assignment
-
-    // Get a professor to assign the project to (for now, get the first one)
-    const professor = await prisma.professor.findFirst();
-
-    if (!professor) {
-      return NextResponse.json(
-        {success: false, error: 'هیچ استادی در سیستم یافت نشد'},
+        {success: false, error: uploadError.message},
         {status: 500}
       );
     }
 
-    // Save project to database
+    // Get public URL
+    const {data: publicUrlData} = supabase.storage
+      .from('projects')
+      .getPublicUrl(filePath);
+    const publicUrl = publicUrlData.publicUrl;
+
+    // Save project in DB
     const project = await prisma.project.create({
       data: {
         title,
         description,
         senderId: parseInt(studentId),
-        publisherId: professor.id,
-        projectAddress: filepath,
+        assignmentId: parseInt(assignmentId),
+        projectAddress: publicUrl,
+        publishedDate: new Date(),
         sendDate: new Date(),
+        publisherId: 1, // You may want to set this properly
       },
     });
 
