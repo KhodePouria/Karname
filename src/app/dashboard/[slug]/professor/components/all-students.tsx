@@ -2,6 +2,7 @@
 
 import {useEffect, useMemo, useState} from 'react';
 import {useAuth} from '@/contexts/AuthContext';
+import {Search} from 'lucide-react';
 
 // Minimal shape from /api/projects?professorId=
 type Project = {
@@ -283,7 +284,7 @@ const AllStudents = () => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-4 lg:p-6">
+    <div className=" rounded-xl p-4 lg:p-6">
       <div className="flex flex-col gap-4 mb-6 lg:flex-row lg:items-center lg:justify-between">
         <h2 className="text-lg font-bold text-primary lg:text-2xl">
           تمام دانشجویان
@@ -296,7 +297,9 @@ const AllStudents = () => {
             onChange={(e) => setQuery(e.target.value)}
             className="pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary w-72"
           />
-          <span className="absolute left-2 top-1/2 -translate-y-1/2">🔍</span>
+          <span className="absolute left-2 top-1/2 -translate-y-1/2">
+            <Search />
+          </span>
         </div>
       </div>
 

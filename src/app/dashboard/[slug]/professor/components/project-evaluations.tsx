@@ -2,6 +2,7 @@
 
 import {useState, useEffect} from 'react';
 import {useAuth} from '@/contexts/AuthContext';
+import {Search} from 'lucide-react';
 
 type Project = {
   id: string;
@@ -126,7 +127,7 @@ export default function ProjectEvaluations() {
             className="w-full pl-8 pr-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary lg:w-64"
           />
           <span className="absolute left-2 top-1/2 transform -translate-y-1/2">
-            🔍
+            <Search />
           </span>
         </div>
       </div>

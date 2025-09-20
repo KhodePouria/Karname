@@ -35,7 +35,7 @@ export default function Notifications() {
         } else {
           setError(data.error || 'خطای ناشناخته');
         }
-      } catch (e) {
+      } catch {
         setError('خطا در دریافت اعلانات');
       } finally {
         setLoading(false);

@@ -53,7 +53,7 @@ export default function Leaderboard() {
   return (
     <div className="bg-white rounded-xl shadow-md p-6">
       <div className="flex items-center justify-between mb-6">
-        <h3 className={`text-xl text-primary`}>🏆 جدول رتبه‌بندی کلاس</h3>
+        <h3 className={`text-xl text-primary`}>🏆 جدول رتبه‌بندی نمرات</h3>
         <div className="text-sm text-gray-500">
           آخرین به‌روزرسانی: {new Date().toLocaleDateString('fa-IR')}
         </div>

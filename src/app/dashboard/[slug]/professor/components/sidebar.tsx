@@ -3,6 +3,16 @@
 import {Dispatch, SetStateAction} from 'react';
 import Link from 'next/link';
 import {useAuth} from '@/contexts/AuthContext';
+import {
+  ArrowLeft,
+  ArrowRight,
+  ChartBar,
+  Folder,
+  LogOut,
+  Presentation,
+  Settings,
+  User,
+} from 'lucide-react';
 
 interface SidebarProps {
   activeTab: string;
@@ -20,16 +30,16 @@ export default function Sidebar({
   const {user, logout} = useAuth();
 
   const menuItems = [
-    {id: 'dashboard', name: 'داشبورد', icon: '📊'},
+    {id: 'dashboard', name: 'داشبورد', icon: <ChartBar />},
     {
       id: 'classrooms',
       name: 'کلاس‌های درسی',
-      icon: '🎓',
+      icon: <Presentation />,
       href: `/dashboard/${user?.id}/professor/classrooms`,
     },
-    {id: 'projects', name: 'پروژه‌های دانشجویی', icon: '📁'},
-    {id: 'students', name: 'دانشجویان', icon: '👨‍🎓'},
-    {id: 'settings', name: 'تنظیمات', icon: '⚙️'},
+    {id: 'projects', name: 'پروژه‌های دانشجویی', icon: <Folder />},
+    {id: 'students', name: 'دانشجویان', icon: <User />},
+    {id: 'settings', name: 'تنظیمات', icon: <Settings />},
   ];
 
   return (
@@ -46,7 +56,7 @@ export default function Sidebar({
           onClick={toggleCollapse}
           className="p-1 rounded-full hover:bg-gray-100"
         >
-          {isCollapsed ? '→' : '←'}
+          {isCollapsed ? <ArrowRight /> : <ArrowLeft />}
         </button>
       </div>
 
@@ -108,7 +118,9 @@ export default function Sidebar({
             onClick={logout}
             className="flex items-center p-2 rounded-lg text-red-600 hover:bg-red-50 w-full"
           >
-            <span className="text-lg">🚪</span>
+            <span className="text-lg">
+              <LogOut />
+            </span>
             {!isCollapsed && <span className="mr-3">خروج</span>}
           </button>
         </div>

@@ -1,16 +1,27 @@
 'use client';
 import Image from 'next/image';
 import {motion} from 'framer-motion';
-import heroPic from '../public/heroPic.png';
 import clouds from '../public/clouds.svg';
 import line from '../public/Line.svg';
 import localFont from 'next/font/local';
-
+import {useEffect, useState} from 'react';
+//I don't know why but it doesn't work if I don't put this comment here
+import {Player} from '@lottiefiles/react-lottie-player';
+import animation1 from '../public/animation.json';
 const myFontBold = localFont({
   src: '../assets/fonts/Kalameh-Bold.ttf',
 });
 
 export default function Features() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    onResize();
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
   return (
     <>
       {/* Features section */}
@@ -18,31 +29,28 @@ export default function Features() {
         <motion.div
           className="relative overflow-hidden"
           initial={{y: 0, opacity: 0}}
-          whileInView={{y: -800, opacity: 1}}
-          viewport={{
-            margin: '300px',
-            once: true,
-          }}
-          transition={{duration: 1.5, ease: 'easeOut'}}
+          whileInView={{y: isMobile ? 0 : -300, opacity: 1}}
+          viewport={{margin: '300px', once: true}}
+          transition={{duration: 1.2, ease: 'easeOut'}}
         >
           <Image
             src={clouds}
             width={1920}
             height={1080}
             alt="clouds"
-            className=" left-0 w-full h-auto object-cover pointer-events-none z-20"
+            className="left-0 w-full h-auto object-cover pointer-events-none select-none z-0"
+            priority
           />
 
-          <section className="top-1/2 h-auto w-full bg-white mt-[-1rem] z-20 px-4 sm:px-8 md:px-16 lg:px-32 xl:px-64 py-8">
+          <section className="relative z-10 top-1/2 h-auto w-full bg-white mt-[-1rem] px-4 sm:px-8 md:px-16 lg:px-32 xl:px-64 py-8">
             <div className="flex flex-col w-full lg:flex-row items-center gap-8 lg:gap-16">
               {/* Hero Image */}
               <div className="flex-shrink-0 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-xl xl:max-w-2xl animate-slideUp">
-                <Image
-                  src={heroPic}
-                  alt="heroPic"
-                  width={1080}
-                  height={720}
-                  className="w-full h-auto"
+                <Player
+                  autoplay
+                  loop
+                  src={animation1}
+                  style={{height: 720, width: 1080, translate: '25%'}}
                 />
               </div>
 
@@ -116,12 +124,13 @@ export default function Features() {
               </div>
             </div>
           </section>
+          {/* Bottom clouds - hidden on small to avoid overlap */}
           <Image
             src={clouds}
             width={1920}
             height={1080}
             alt="clouds"
-            className=" rotate-180 w-full h-auto object-cover pointer-events-none z-20"
+            className="hidden md:block rotate-180 w-full h-auto object-cover pointer-events-none select-none z-0"
           />
         </motion.div>
       </section>

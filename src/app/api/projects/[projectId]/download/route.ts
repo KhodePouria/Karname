@@ -1,7 +1,6 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {PrismaClient} from '@prisma/client';
 import {readFile} from 'fs/promises';
-import path from 'path';
 
 const prisma = new PrismaClient();
 
@@ -49,9 +48,6 @@ export async function GET(
     try {
       // Read the file
       const fileBuffer = await readFile(filePath);
-
-      // Get original filename from path
-      const originalFilename = path.basename(filePath);
 
       // Create a more user-friendly filename
       const studentName = `${project.sender.Fname}_${project.sender.Lname}`;

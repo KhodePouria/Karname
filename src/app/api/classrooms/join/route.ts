@@ -14,7 +14,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Find classroom by join code
     const classroom = await prisma.classroom.findUnique({
       where: {joinCode: joinCode.toUpperCase()},
       include: {
@@ -31,7 +30,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({error: 'Invalid join code'}, {status: 404});
     }
 
-    // Check if student is already a member
     const existingMember = await prisma.classroomMember.findUnique({
       where: {
         studentId_classroomId: {
@@ -48,7 +46,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Add student to classroom
     await prisma.classroomMember.create({
       data: {
         studentId: parseInt(studentId),

@@ -1,8 +1,17 @@
 'use client';
 
-import Link from 'next/link';
 import {useState} from 'react';
 import {useAuth} from '@/contexts/AuthContext';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Bell,
+  Folder,
+  LayoutDashboard,
+  LogOut,
+  Star,
+  User,
+} from 'lucide-react';
 
 interface SidebarProps {
   activeItem: string;
@@ -14,11 +23,11 @@ export default function Sidebar({activeItem, onItemClick}: SidebarProps) {
   const {user, logout} = useAuth();
 
   const menuItems = [
-    {name: 'داشبورد', id: 'dashboard', icon: '📊'},
-    {name: 'پروژه‌های من', id: 'projects', icon: '📁'},
-    {name: 'جدول رتبه‌بندی', id: 'leaderboard', icon: '🏆'},
-    {name: 'اعلانات', id: 'notifications', icon: '🔔'},
-    {name: 'پروفایل', id: 'profile', icon: '👤'},
+    {name: 'داشبورد', id: 'dashboard', icon: <LayoutDashboard />},
+    {name: 'پروژه‌های من', id: 'projects', icon: <Folder />},
+    {name: 'جدول رتبه‌بندی', id: 'leaderboard', icon: <Star />},
+    {name: 'اعلانات', id: 'notifications', icon: <Bell />},
+    {name: 'پروفایل', id: 'profile', icon: <User />},
   ];
 
   return (
@@ -33,7 +42,7 @@ export default function Sidebar({activeItem, onItemClick}: SidebarProps) {
           onClick={() => setCollapsed(!collapsed)}
           className="p-1 rounded-full hover:bg-gray-100"
         >
-          {collapsed ? '→' : '←'}
+          {collapsed ? <ArrowRight /> : <ArrowLeft />}
         </button>
       </div>
 
@@ -81,7 +90,9 @@ export default function Sidebar({activeItem, onItemClick}: SidebarProps) {
             onClick={logout}
             className="flex items-center p-2 rounded-lg text-red-600 hover:bg-red-50 w-full"
           >
-            <span className="text-lg">🚪</span>
+            <span className="text-lg">
+              <LogOut />
+            </span>
             {!collapsed && <span className="mr-3">خروج</span>}
           </button>
         </div>

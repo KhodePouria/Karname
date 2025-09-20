@@ -5,6 +5,15 @@ import Link from 'next/link';
 import {useState} from 'react';
 import {useAuth} from '@/contexts/AuthContext';
 import {useRouter} from 'next/navigation';
+import {
+  BarChart,
+  Clipboard,
+  Eye,
+  EyeClosed,
+  Mail,
+  MessageCircle,
+  Upload,
+} from 'lucide-react';
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -123,25 +132,33 @@ export default function SignUp() {
             <div className="flex items-center justify-center lg:justify-end gap-3">
               <span className="text-[#556d9c]">آپلود آسان پروژه‌ها</span>
               <div className="w-6 h-6 flex items-center justify-center">
-                <span className="text-secondary text-sm">🚀</span>
+                <span className="text-primary text-sm">
+                  <Upload />
+                </span>
               </div>
             </div>
             <div className="flex items-center justify-center lg:justify-end gap-3">
               <span className="text-[#556d9c]">پیگیری هوشمند وضعیت</span>
               <div className="w-6 h-6 flex items-center justify-center">
-                <span className="text-secondary text-sm">📊</span>
+                <span className="text-primary text-sm">
+                  <BarChart />
+                </span>
               </div>
             </div>
             <div className="flex items-center justify-center lg:justify-end gap-3">
               <span className="text-[#556d9c]">ارتباط مستقیم با اساتید</span>
               <div className="w-6 h-6 flex items-center justify-center">
-                <span className="text-secondary text-sm">👥</span>
+                <span className="text-primary text-sm">
+                  <MessageCircle />
+                </span>
               </div>
             </div>
             <div className="flex items-center justify-center lg:justify-end gap-3">
               <span className="text-[#556d9c]">گزارش‌گیری پیشرفته</span>
               <div className="w-6 h-6 flex items-center justify-center">
-                <span className="text-secondary text-sm">📈</span>
+                <span className="text-primary text-sm">
+                  <Clipboard />
+                </span>
               </div>
             </div>
           </div>
@@ -336,7 +353,9 @@ export default function SignUp() {
                     dir="ltr"
                   />
                   <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                    <span className="text-gray-400">📧</span>
+                    <span className="text-gray-400">
+                      <Mail />
+                    </span>
                   </div>
                 </div>
               </div>
@@ -363,9 +382,9 @@ export default function SignUp() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-primary transition-colors"
+                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-primary transition-colors"
                     >
-                      {showPassword ? '🙈' : '👁️'}
+                      {showPassword ? <EyeClosed /> : <Eye />}
                     </button>
                   </div>
                 </div>
@@ -391,9 +410,9 @@ export default function SignUp() {
                       onClick={() =>
                         setShowConfirmPassword(!showConfirmPassword)
                       }
-                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-primary transition-colors"
+                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-primary transition-colors"
                     >
-                      {showConfirmPassword ? '🙈' : '👁️'}
+                      {showConfirmPassword ? <Eye /> : <EyeClosed />}
                     </button>
                   </div>
                 </div>

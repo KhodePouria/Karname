@@ -68,7 +68,7 @@ export default function StudentClassroomDetailPage() {
       const data = await res.json();
       if (data.success) {
         const current = data.classrooms.find(
-          (c: any) => c.id === parseInt(classroomId)
+          (c: {id: number}) => c.id === parseInt(classroomId)
         );
         if (current) {
           setClassroom({
@@ -92,10 +92,18 @@ export default function StudentClassroomDetailPage() {
       const data = await res.json();
       if (data.success) {
         setMembers(
-          data.members.map((m: any) => ({
-            ...m,
-            joinedAt: new Date(m.joinedAt).toISOString(),
-          }))
+          data.members.map(
+            (m: {
+              id: number;
+              name: string;
+              studentNumber: string;
+              major: string | null;
+              joinedAt: string;
+            }) => ({
+              ...m,
+              joinedAt: new Date(m.joinedAt).toISOString(),
+            })
+          )
         );
       }
     } catch (e) {

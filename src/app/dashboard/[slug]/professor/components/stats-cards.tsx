@@ -2,6 +2,7 @@
 
 import {useState, useEffect} from 'react';
 import {useAuth} from '@/contexts/AuthContext';
+import {FileCheck2, NotebookPen, Pin, UserStar} from 'lucide-react';
 
 type Stats = {
   pendingEvaluations: number;
@@ -47,25 +48,25 @@ export default function StatsCards() {
     {
       title: 'پروژه‌های منتظر ارزیابی',
       value: loading ? '...' : stats.pendingEvaluations.toString(),
-      icon: '📝',
+      icon: <NotebookPen />,
       color: 'bg-yellow-100 text-yellow-800',
     },
     {
       title: 'پروژه‌های بررسی شده',
       value: loading ? '...' : stats.evaluatedProjects.toString(),
-      icon: '✅',
+      icon: <FileCheck2 />,
       color: 'bg-green-100 text-green-800',
     },
     {
       title: 'دانشجویان فعال',
       value: loading ? '...' : stats.activeStudents.toString(),
-      icon: '👨‍🎓',
+      icon: <UserStar />,
       color: 'bg-blue-100 text-blue-800',
     },
     {
       title: 'پروژه‌های امروز',
       value: loading ? '...' : stats.todaysProjects.toString(),
-      icon: '📌',
+      icon: <Pin />,
       color: 'bg-red-100 text-red-800',
     },
   ];

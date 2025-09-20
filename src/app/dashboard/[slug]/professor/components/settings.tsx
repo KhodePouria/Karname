@@ -9,8 +9,8 @@ const Settings = () => {
     firstName: user?.name?.split(' ')[0] || '',
     lastName: user?.name?.split(' ').slice(1).join(' ') || '',
     email: user?.email || '',
-    major: (user as any)?.major || '',
-    year: (user as any)?.year || '',
+    major: user?.major || '',
+    year: user?.year || '',
     currentPassword: '',
     newPassword: '',
   });
@@ -187,8 +187,8 @@ const Settings = () => {
                 firstName: user?.name?.split(' ')[0] || '',
                 lastName: user?.name?.split(' ').slice(1).join(' ') || '',
                 email: user?.email || '',
-                major: (user as any)?.major || '',
-                year: (user as any)?.year || '',
+                major: user?.major || '',
+                year: user?.year || '',
                 currentPassword: '',
                 newPassword: '',
               })

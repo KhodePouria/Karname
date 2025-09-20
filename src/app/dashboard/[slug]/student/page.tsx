@@ -68,10 +68,10 @@ export default function StudentDashboard() {
         toast.error(data.error || 'خطا در به‌روزرسانی پروفایل');
         return;
       }
-      updateUser && updateUser(data.user);
+      updateUser?.(data.user);
       toast.success('پروفایل با موفقیت به‌روزرسانی شد');
       setProfile((p) => ({...p, currentPassword: '', newPassword: ''}));
-    } catch (err) {
+    } catch {
       toast.error('خطا در به‌روزرسانی پروفایل');
     } finally {
       setSaving(false);
@@ -273,10 +273,10 @@ export default function StudentDashboard() {
         {/* Main Content */}
         <div className="flex-1 overflow-y-auto">
           {/* Header */}
-          <header className="bg-white shadow-sm p-4 sticky top-0 z-10">
+          <header className="p-8 sticky top-0 z-10">
             <div className="flex justify-between items-center">
               <div className="flex items-center">
-                <h1 className={`text-2xl font-bold text-primary`}>
+                <h1 className={`text-3xl font-bold text-primary`}>
                   {activeTab === 'dashboard' && 'داشبورد'}
                   {activeTab === 'projects' && 'پروژه‌های من'}
                   {activeTab === 'leaderboard' && 'جدول رتبه‌بندی'}

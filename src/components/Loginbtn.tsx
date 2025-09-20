@@ -31,7 +31,9 @@ const Loginbtn = () => {
   }
 
   return (
-    <div className="flex items-center">
+    <div className="flex items-center gap-2 sm:gap-3">
+      {/* Classes button (logged-in users) */}
+
       {!user && (
         <div className="flex gap-2 sm:flex-row sm:gap-3">
           <Link
@@ -52,6 +54,7 @@ const Loginbtn = () => {
           </Link>
         </div>
       )}
+
       {user && (
         <div className="relative" ref={dropdownRef}>
           {/* User Profile Button */}
@@ -165,6 +168,26 @@ const Loginbtn = () => {
             </div>
           )}
         </div>
+      )}
+      {user && (
+        <Link
+          href={
+            user.role === 'student'
+              ? `/dashboard/${user.id}/student/classrooms`
+              : `/dashboard/${user.id}/professor/classrooms`
+          }
+          className="group inline-flex items-center gap-2 bg-gradient-to-r from-primary to-primary/80 text-white rounded-xl px-3 py-2 sm:px-4 sm:py-2.5 shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-primary/40"
+          title="کلاس‌ها"
+          aria-label="کلاس‌ها"
+        >
+          <span className="text-lg">🎓</span>
+          <span className="text-sm font-bold select-none hidden xs:inline sm:inline">
+            کلاس‌ها
+          </span>
+          <span className="text-xl opacity-0 translate-x-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all hidden sm:inline">
+            →
+          </span>
+        </Link>
       )}
     </div>
   );

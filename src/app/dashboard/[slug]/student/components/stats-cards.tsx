@@ -2,6 +2,14 @@
 
 import {useEffect, useState} from 'react';
 import {useAuth} from '@/contexts/AuthContext';
+import {Folder, Hourglass, FileCheck2, Star} from 'lucide-react';
+
+type Project = {
+  id: number;
+  title: string;
+  isGraded: boolean;
+  rating: number | null;
+};
 
 export default function StatsCards() {
   const {user} = useAuth();
@@ -23,14 +31,17 @@ export default function StatsCards() {
         if (data.success && Array.isArray(data.projects)) {
           const projects = data.projects;
           const total = projects.length;
-          const reviewed = projects.filter((p: any) => p.isGraded).length;
+          const reviewed = projects.filter((p: Project) => p.isGraded).length;
           const pending = total - reviewed;
           const rated = projects.filter(
-            (p: any) => p.rating !== null && p.rating !== undefined
+            (p: Project) => p.rating !== null && p.rating !== undefined
           );
           const avg = rated.length
             ? Math.round(
-                (rated.reduce((s: number, p: any) => s + (p.rating || 0), 0) /
+                (rated.reduce(
+                  (s: number, p: Project) => s + (p.rating || 0),
+                  0
+                ) /
                   rated.length) *
                   10
               ) / 10
@@ -39,7 +50,7 @@ export default function StatsCards() {
         } else {
           setStats({total: 0, pending: 0, reviewed: 0, avg: 0});
         }
-      } catch (e) {
+      } catch {
         setStats({total: 0, pending: 0, reviewed: 0, avg: 0});
       } finally {
         setLoading(false);
@@ -53,25 +64,25 @@ export default function StatsCards() {
     {
       title: 'کل پروژه‌ها',
       value: stats.total,
-      icon: '📁',
+      icon: <Folder />,
       color: 'bg-blue-100 text-blue-800',
     },
     {
       title: 'در انتظار بررسی',
       value: stats.pending,
-      icon: '⏳',
+      icon: <Hourglass />,
       color: 'bg-yellow-100 text-yellow-800',
     },
     {
       title: 'بررسی شده',
       value: stats.reviewed,
-      icon: '✅',
+      icon: <FileCheck2 />,
       color: 'bg-green-100 text-green-800',
     },
     {
       title: 'میانگین امتیاز',
       value: `${stats.avg}`,
-      icon: '⭐',
+      icon: <Star />,
       color: 'bg-purple-100 text-purple-800',
       hint: '/20',
     },

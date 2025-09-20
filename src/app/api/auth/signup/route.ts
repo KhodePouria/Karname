@@ -49,7 +49,6 @@ export async function POST(request: Request) {
         );
       }
 
-      // Create new student
       const student = await prisma.student.create({
         data: {
           Fname: firstName,
@@ -75,7 +74,7 @@ export async function POST(request: Request) {
         },
       });
     } else if (role === 'professor') {
-      const professorNumber = studentId; // Using same field for professor number
+      const professorNumber = studentId;
 
       if (!professorNumber) {
         return NextResponse.json(
@@ -84,7 +83,6 @@ export async function POST(request: Request) {
         );
       }
 
-      // Check if professor already exists
       const existingProfessor = await prisma.professor.findFirst({
         where: {
           OR: [{email}, {Pnumber: professorNumber}],
@@ -98,7 +96,6 @@ export async function POST(request: Request) {
         );
       }
 
-      // Create new professor
       const professor = await prisma.professor.create({
         data: {
           Fname: firstName,

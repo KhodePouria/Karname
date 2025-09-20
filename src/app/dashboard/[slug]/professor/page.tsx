@@ -10,6 +10,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import Allprojects from './components/all-projects';
 import AllStudents from './components/all-students';
 import Settings from './components/settings';
+import {ChartBar, Folder, Settings2, User} from 'lucide-react';
 
 export default function ProfessorDashboard() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -103,13 +104,13 @@ export default function ProfessorDashboard() {
             </div>
 
             {/* Mobile Tab Navigation */}
-            <div className="lg:hidden mb-6">
+            <div className="lg:hidden mb-6 ">
               <div className="flex overflow-x-auto bg-white rounded-lg shadow-sm">
                 {[
-                  {id: 'dashboard', label: 'داشبورد', icon: '📊'},
-                  {id: 'projects', label: 'پروژه‌ها', icon: '📁'},
-                  {id: 'students', label: 'دانشجویان', icon: '👥'},
-                  {id: 'settings', label: 'تنظیمات', icon: '⚙️'},
+                  {id: 'dashboard', label: 'داشبورد', icon: <ChartBar />},
+                  {id: 'projects', label: 'پروژه‌ها', icon: <Folder />},
+                  {id: 'students', label: 'دانشجویان', icon: <User />},
+                  {id: 'settings', label: 'تنظیمات', icon: <Settings2 />},
                 ].map((tab) => (
                   <button
                     key={tab.id}

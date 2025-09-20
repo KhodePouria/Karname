@@ -9,6 +9,7 @@ import dynamic from 'next/dynamic';
 // Persian calendar + locale for the date picker
 import persian from 'react-date-object/calendars/persian';
 import persian_fa from 'react-date-object/locales/persian_fa';
+import DateObject from 'react-date-object';
 
 const DatePicker = dynamic(() => import('react-multi-date-picker'), {
   ssr: false,
@@ -50,7 +51,7 @@ export default function ClassroomDetailPage() {
     description: '',
     dueDate: '',
   });
-  const [dueDateValue, setDueDateValue] = useState<any | null>(null);
+  const [dueDateValue, setDueDateValue] = useState<DateObject | null>(null);
 
   useEffect(() => {
     if (classroomId) {
@@ -241,7 +242,7 @@ export default function ClassroomDetailPage() {
                   <div className="flex items-center gap-3">
                     <DatePicker
                       value={dueDateValue}
-                      onChange={(val: any) => {
+                      onChange={(val: DateObject | null) => {
                         setDueDateValue(val);
                         if (val && typeof val.toDate === 'function') {
                           const iso = (val.toDate() as Date).toISOString();
@@ -254,7 +255,6 @@ export default function ClassroomDetailPage() {
                       locale={persian_fa}
                       format="YYYY/MM/DD HH:mm"
                       plugins={[
-                        // @ts-ignore
                         <TimePicker key="tp" position="bottom" hideSeconds />,
                       ]}
                       calendarPosition="bottom-right"

@@ -2,6 +2,7 @@
 
 import {useEffect, useMemo, useState} from 'react';
 import {useAuth} from '@/contexts/AuthContext';
+import {Search} from 'lucide-react';
 
 // Row type for UI
 type ProjectRow = {
@@ -129,9 +130,11 @@ const Allprojects = () => {
               placeholder="جستجو بر اساس عنوان یا نام دانشجو..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary w-64"
+              className="pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary w-44 lg:w-64"
             />
-            <span className="absolute left-2 top-1/2 -translate-y-1/2">🔍</span>
+            <span className="absolute left-2 top-1/2 -translate-y-1/2">
+              <Search />
+            </span>
           </div>
           <select
             value={status}

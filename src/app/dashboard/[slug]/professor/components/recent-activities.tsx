@@ -2,6 +2,7 @@
 
 import {useState, useEffect} from 'react';
 import {useAuth} from '@/contexts/AuthContext';
+import {FileCheck2, MessageCircle, StickyNote} from 'lucide-react';
 
 type Activity = {
   id: string;
@@ -105,17 +106,17 @@ export default function RecentActivities() {
                 <div className="ml-3 flex-shrink-0">
                   {activity.type === 'submission' && (
                     <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center">
-                      📄
+                      <StickyNote />
                     </div>
                   )}
                   {activity.type === 'evaluation' && (
                     <div className="w-8 h-8 rounded-full bg-green-100 text-green-800 flex items-center justify-center">
-                      ⭐
+                      <FileCheck2 />
                     </div>
                   )}
                   {activity.type === 'message' && (
                     <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-800 flex items-center justify-center">
-                      💬
+                      <MessageCircle />
                     </div>
                   )}
                 </div>

@@ -5,7 +5,6 @@ const prisma = new PrismaClient();
 
 export async function GET() {
   try {
-    // Get all students with their graded projects
     const students = await prisma.student.findMany({
       include: {
         projects: {
@@ -19,7 +18,6 @@ export async function GET() {
       },
     });
 
-    // Calculate average ratings and create leaderboard
     const leaderboardData = students
       .map((student) => {
         const gradedProjects = student.projects.filter(
@@ -35,13 +33,13 @@ export async function GET() {
         return {
           id: student.id.toString(),
           name: `${student.Fname} ${student.Lname}`,
-          rating: Math.round(averageRating * 10) / 10, // Round to 1 decimal place
+          rating: Math.round(averageRating * 10) / 10,
           projectsCount: gradedProjects.length,
           totalProjects: student.projects.length,
         };
       })
-      .filter((student) => student.projectsCount > 0) // Only include students with graded projects
-      .sort((a, b) => b.rating - a.rating) // Sort by rating descending
+      .filter((student) => student.projectsCount > 0)
+      .sort((a, b) => b.rating - a.rating)
       .map((student, index) => ({
         ...student,
         rank: index + 1,
