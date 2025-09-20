@@ -3,9 +3,10 @@ import {PrismaClient} from '@prisma/client';
 import {createClient} from '@supabase/supabase-js';
 
 const prisma = new PrismaClient();
+// Use service role key for server-side operations to bypass RLS
 const supabase = createClient(
   process.env.SUPABASE_URL || '',
-  process.env.SUPABASE_ANON_KEY || ''
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || ''
 );
 
 export async function POST(
@@ -94,13 +95,29 @@ export async function POST(
     const filePath = `assignments/${assignmentId}/${filename}`;
 
     // Upload to Supabase Storage
-    const {error: uploadError} = await supabase.storage
-      .from('projects')
-      .upload(filePath, file, {upsert: true});
+    // Convert the file to array buffer first
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
 
-    if (uploadError) {
+    try {
+      const {error: uploadError} = await supabase.storage
+        .from('projects')
+        .upload(filePath, buffer, {
+          upsert: true,
+          contentType: file.type,
+        });
+
+      if (uploadError) {
+        console.error('Supabase upload error:', uploadError);
+        return NextResponse.json(
+          {success: false, error: `خطا در آپلود فایل: ${uploadError.message}`},
+          {status: 500}
+        );
+      }
+    } catch (uploadError) {
+      console.error('Caught upload error:', uploadError);
       return NextResponse.json(
-        {success: false, error: `خطا در آپلود فایل: ${uploadError.message}`},
+        {success: false, error: 'خطا در آپلود فایل به سرور'},
         {status: 500}
       );
     }
