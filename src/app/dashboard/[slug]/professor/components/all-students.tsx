@@ -3,6 +3,7 @@
 import {useEffect, useMemo, useState} from 'react';
 import {useAuth} from '@/contexts/AuthContext';
 import {Search} from 'lucide-react';
+import {nullable} from 'zod';
 
 // Minimal shape from /api/projects?professorId=
 type Project = {
@@ -267,7 +268,7 @@ const AllStudents = () => {
                     </td>
                     <td className="px-4 py-3">
                       <a
-                        href={`/api/projects/${p.id}/download`}
+                        href={p.projectAddress || undefined}
                         className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary text-white rounded-lg text-sm hover:bg-primary/90 transition-colors"
                       >
                         دانلود

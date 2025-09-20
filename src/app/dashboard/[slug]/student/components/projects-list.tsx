@@ -12,6 +12,7 @@ type Project = {
   professor: string;
   rating: number | null;
   feedback: string | null;
+  projectUrl?: string | null;
 };
 
 export default function ProjectsList() {
@@ -344,7 +345,9 @@ export default function ProjectsList() {
                 {copied ? 'کپی شد!' : 'کپی لینک'}
               </button>
               <a
-                href={`/api/projects/${selectedProject.id}/download`}
+                href={selectedProject.projectUrl || undefined}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm hover:bg-primary/90 transition-colors"
               >
                 <svg

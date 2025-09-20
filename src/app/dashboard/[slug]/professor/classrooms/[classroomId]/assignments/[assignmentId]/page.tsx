@@ -314,7 +314,7 @@ export default function AssignmentDetailPage() {
 
                     <div className="flex flex-col gap-2 sm:flex-row">
                       <a
-                        href={`/api/projects/${submission.id}/download`}
+                        href={submission.projectUrl}
                         className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition-colors text-center flex items-center gap-2 justify-center"
                       >
                         <svg
