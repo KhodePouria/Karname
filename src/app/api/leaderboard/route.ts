@@ -51,9 +51,6 @@ export async function GET() {
     });
   } catch (error) {
     console.error('Error fetching leaderboard:', error);
-    return NextResponse.json(
-      {success: false, error: 'خطای سرور'},
-      {status: 500}
-    );
+    return NextResponse.json({success: false, error: error}, {status: 500});
   }
 }

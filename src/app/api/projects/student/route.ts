@@ -53,9 +53,6 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     console.error('Error fetching projects:', error);
-    return NextResponse.json(
-      {success: false, error: 'خطای سرور'},
-      {status: 500}
-    );
+    return NextResponse.json({success: false, error: error}, {status: 500});
   }
 }
