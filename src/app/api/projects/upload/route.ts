@@ -5,10 +5,18 @@ import {createClient} from '@supabase/supabase-js';
 const prisma = new PrismaClient();
 
 // Use service role key for server-side operations to bypass RLS
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY!
-);
+const supabaseUrl = process.env.SUPABASE_URL!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY!;
+
+console.log('Supabase URL configured:', !!supabaseUrl);
+console.log('Service key configured:', !!supabaseServiceKey);
+
+const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false
+  }
+});
 
 export async function POST(request: Request) {
   try {
@@ -52,6 +60,35 @@ export async function POST(request: Request) {
     const buffer = Buffer.from(bytes);
 
     try {
+      // First, check if the bucket exists, create it if it doesn't
+      const { data: buckets } = await supabase
+        .storage
+        .listBuckets();
+      
+      console.log('Available buckets:', buckets?.map(b => b.name));
+      
+      const projectsBucketExists = buckets?.some(bucket => bucket.name === 'projects');
+      
+      if (!projectsBucketExists) {
+        console.log('Projects bucket does not exist, creating it');
+        const { error: bucketError } = await supabase
+          .storage
+          .createBucket('projects', { 
+            public: true,
+            fileSizeLimit: 50 * 1024 * 1024 // 50MB
+          });
+          
+        if (bucketError) {
+          console.error('Failed to create bucket:', bucketError);
+          return NextResponse.json(
+            {success: false, error: `خطا در ایجاد مخزن فایل: ${bucketError.message}`},
+            {status: 500}
+          );
+        }
+      }
+
+      // Now try to upload with explicit RLS bypass
+      console.log('Attempting upload to path:', filePath);
       const {error: uploadError} = await supabase.storage
         .from('projects')
         .upload(filePath, buffer, {
@@ -66,6 +103,7 @@ export async function POST(request: Request) {
           {status: 500}
         );
       }
+      console.log('File uploaded successfully');
     } catch (uploadError) {
       console.error('Caught upload error:', uploadError);
       return NextResponse.json(
