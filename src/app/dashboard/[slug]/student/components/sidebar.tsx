@@ -14,12 +14,18 @@ import {
 } from 'lucide-react';
 
 interface SidebarProps {
-  activeItem: string;
-  onItemClick: (item: string) => void;
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+  isCollapsed?: boolean;
+  toggleCollapse?: () => void;
 }
 
-export default function Sidebar({activeItem, onItemClick}: SidebarProps) {
-  const [collapsed, setCollapsed] = useState(false);
+export default function Sidebar({
+  activeTab,
+  setActiveTab,
+  isCollapsed = false,
+  toggleCollapse,
+}: SidebarProps) {
   const {user, logout} = useAuth();
 
   const menuItems = [
@@ -32,22 +38,22 @@ export default function Sidebar({activeItem, onItemClick}: SidebarProps) {
 
   return (
     <div
-      className={`bg-white shadow-md h-screen sticky top-0 transition-all duration-300 ${collapsed ? 'w-16' : 'w-64'}`}
+      className={`bg-white shadow-md h-screen sticky top-0 transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'}`}
     >
       <div className="flex justify-between items-center p-4 border-b border-gray-100">
-        {!collapsed && (
+        {!isCollapsed && (
           <div className="text-primary font-bold text-lg">کارنامه</div>
         )}
         <button
-          onClick={() => setCollapsed(!collapsed)}
+          onClick={toggleCollapse}
           className="p-1 rounded-full hover:bg-gray-100"
         >
-          {collapsed ? <ArrowRight /> : <ArrowLeft />}
+          {isCollapsed ? <ArrowRight /> : <ArrowLeft />}
         </button>
       </div>
 
       <div className="p-3">
-        {!collapsed && (
+        {!isCollapsed && (
           <div className="flex flex-col items-center mb-6 mt-2">
             <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mb-2">
               <span className="text-2xl">👨‍🎓</span>
@@ -67,16 +73,16 @@ export default function Sidebar({activeItem, onItemClick}: SidebarProps) {
           {menuItems.map((item) => {
             return (
               <button
-                onClick={() => onItemClick(item.id)}
-                key={item.name}
+                onClick={() => setActiveTab(item.id)}
+                key={item.id}
                 className={`w-full flex items-center p-2 rounded-lg transition-colors ${
-                  activeItem === item.id
+                  activeTab === item.id
                     ? 'bg-primary text-white'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
                 <span className="text-lg">{item.icon}</span>
-                {!collapsed && (
+                {!isCollapsed && (
                   <span className="mr-3 text-right">{item.name}</span>
                 )}
               </button>
@@ -93,7 +99,7 @@ export default function Sidebar({activeItem, onItemClick}: SidebarProps) {
             <span className="text-lg">
               <LogOut />
             </span>
-            {!collapsed && <span className="mr-3">خروج</span>}
+            {!isCollapsed && <span className="mr-3">خروج</span>}
           </button>
         </div>
       </div>

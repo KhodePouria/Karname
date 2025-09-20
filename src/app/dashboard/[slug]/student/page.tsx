@@ -14,7 +14,19 @@ import {useAuth} from '@/contexts/AuthContext';
 
 export default function StudentDashboard() {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const {user, updateUser} = useAuth();
+
+  // Toggle sidebar collapsed state for desktop
+  const toggleSidebar = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
+
+  // Toggle mobile sidebar
+  const toggleMobileSidebar = () => {
+    setMobileSidebarOpen(!mobileSidebarOpen);
+  };
 
   // Profile form state
   const [saving, setSaving] = useState(false);
@@ -266,86 +278,104 @@ export default function StudentDashboard() {
 
   return (
     <ProtectedRoute requiredRole="student">
-      <div className="flex h-screen bg-gray-100 text-right" dir="rtl">
-        {/* Sidebar */}
-        <Sidebar activeItem={activeTab} onItemClick={setActiveTab} />
+      <div
+        className="flex flex-col lg:flex-row min-h-screen bg-gray-100 text-right"
+        dir="rtl"
+      >
+        {/* Sidebar - Hidden on mobile, overlay on tablet */}
+        <div className="hidden lg:block">
+          <Sidebar
+            isCollapsed={sidebarCollapsed}
+            toggleCollapse={toggleSidebar}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+          />
+        </div>
 
-        {/* Main Content */}
-        <div className="flex-1 overflow-y-auto">
-          {/* Header */}
-          <header className="p-8 sticky top-0 z-10">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center">
-                <h1 className={`text-3xl font-bold text-primary`}>
-                  {activeTab === 'dashboard' && 'داشبورد'}
-                  {activeTab === 'projects' && 'پروژه‌های من'}
-                  {activeTab === 'leaderboard' && 'جدول رتبه‌بندی'}
-                  {activeTab === 'notifications' && 'اعلانات'}
-                  {activeTab === 'profile' && 'پروفایل'}
-                </h1>
-              </div>
-            </div>
-          </header>
-
-          {/* Mobile Tabs */}
-          <div className="md:hidden flex overflow-x-auto bg-white shadow-sm mb-4">
+        {/* Mobile Navigation */}
+        <div className="lg:hidden bg-white shadow-sm border-b">
+          <div className="flex items-center justify-between p-4">
+            <h1 className="text-xl font-bold text-gray-800">
+              {activeTab === 'dashboard' && 'داشبورد'}
+              {activeTab === 'projects' && 'پروژه‌های من'}
+              {activeTab === 'leaderboard' && 'جدول رتبه‌بندی'}
+              {activeTab === 'notifications' && 'اعلانات'}
+              {activeTab === 'profile' && 'پروفایل'}
+            </h1>
             <button
-              onClick={() => setActiveTab('dashboard')}
-              className={`px-4 py-2 flex-1 text-center ${activeTab === 'dashboard' ? 'text-primary border-b-2 border-primary' : 'text-gray-600'}`}
+              onClick={toggleMobileSidebar}
+              className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
             >
-              داشبورد
-            </button>
-            <button
-              onClick={() => setActiveTab('projects')}
-              className={`px-4 py-2 flex-1 text-center ${activeTab === 'projects' ? 'text-primary border-b-2 border-primary' : 'text-gray-600'}`}
-            >
-              پروژه‌ها
-            </button>
-            <button
-              onClick={() => setActiveTab('leaderboard')}
-              className={`px-4 py-2 flex-1 text-center whitespace-nowrap ${activeTab === 'leaderboard' ? 'text-primary border-b-2 border-primary' : 'text-gray-600'}`}
-            >
-              رتبه‌بندی
-            </button>
-            <button
-              onClick={() => setActiveTab('notifications')}
-              className={`px-4 py-2 flex-1 text-center ${activeTab === 'notifications' ? 'text-primary border-b-2 border-primary' : 'text-gray-600'}`}
-            >
-              اعلانات
-            </button>
-            <button
-              onClick={() => setActiveTab('profile')}
-              className={`px-4 py-2 flex-1 text-center ${activeTab === 'profile' ? 'text-primary border-b-2 border-primary' : 'text-gray-600'}`}
-            >
-              پروفایل
+              ☰
             </button>
           </div>
+        </div>
 
-          {/* Main Content Area */}
-          <main className="p-4">
-            <div className="container mx-auto max-w-7xl">
-              {/* Welcome Section */}
-              {activeTab === 'dashboard' && (
-                <div className="bg-gradient-to-r from-primary to-primary/80 text-white rounded-xl p-6 mb-6">
-                  <div className="flex flex-col md:flex-row items-center justify-between">
-                    <div>
-                      <h2 className="text-2xl font-bold mb-2">
-                        خوش آمدید، {user?.name?.split(' ')[0] || 'محمد'}!
-                      </h2>
-                      <p className="text-white/90">
-                        به داشبورد کارنامه خود خوش آمدید. از اینجا می‌توانید
-                        پروژه‌های خود را مدیریت کنید و بازخوردهای اساتید را
-                        مشاهده کنید.
-                      </p>
-                    </div>
+        {/* Mobile Sidebar Overlay */}
+        {mobileSidebarOpen && (
+          <div
+            className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50"
+            onClick={toggleMobileSidebar}
+          >
+            <div
+              className="w-64 bg-white h-full shadow-xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Sidebar
+                isCollapsed={false}
+                toggleCollapse={toggleMobileSidebar}
+                activeTab={activeTab}
+                setActiveTab={(tab) => {
+                  setActiveTab(tab);
+                  setMobileSidebarOpen(false); // Close mobile sidebar when tab is selected
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Main Content */}
+        <div
+          className={`flex-1 transition-all duration-300 overflow-y-auto ${!sidebarCollapsed ? 'lg:mr-6' : 'lg:mr-20'}`}
+        >
+          <div className="p-4 lg:p-8">
+            {/* Dashboard Header - Hidden on mobile (shown in mobile nav) */}
+            <div className="hidden lg:flex justify-between items-center mb-8">
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-800">
+                {activeTab === 'dashboard' && 'داشبورد'}
+                {activeTab === 'projects' && 'پروژه‌های من'}
+                {activeTab === 'leaderboard' && 'جدول رتبه‌بندی'}
+                {activeTab === 'notifications' && 'اعلانات'}
+                {activeTab === 'profile' && 'پروفایل'}
+              </h1>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-sm">
+                  {user?.name?.[0] || 'م'}
+                </div>
+              </div>
+            </div>
+
+            {/* Welcome Section for Dashboard */}
+            {activeTab === 'dashboard' && (
+              <div className="bg-gradient-to-r from-primary to-primary/80 text-white rounded-xl p-6 mb-6">
+                <div className="flex flex-col md:flex-row items-center justify-between">
+                  <div>
+                    <h2 className="text-2xl font-bold mb-2">
+                      خوش آمدید، {user?.name?.split(' ')[0] || 'محمد'}!
+                    </h2>
+                    <p className="text-white/90">
+                      به داشبورد کارنامه خود خوش آمدید. از اینجا می‌توانید
+                      پروژه‌های خود را مدیریت کنید و بازخوردهای اساتید را مشاهده
+                      کنید.
+                    </p>
                   </div>
                 </div>
-              )}
+              </div>
+            )}
 
-              {/* Dynamic Content Based on Tab */}
-              {renderContent()}
-            </div>
-          </main>
+            {/* Dynamic Content Based on Tab */}
+            {renderContent()}
+          </div>
         </div>
       </div>
     </ProtectedRoute>

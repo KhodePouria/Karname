@@ -5,7 +5,8 @@ import {createClient} from '@supabase/supabase-js';
 const prisma = new PrismaClient();
 // Use service role key for server-side operations to bypass RLS
 const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || '';
+const supabaseServiceKey =
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || '';
 
 console.log('Supabase URL configured:', !!supabaseUrl);
 console.log('Service key configured:', !!supabaseServiceKey);
@@ -13,8 +14,8 @@ console.log('Service key configured:', !!supabaseServiceKey);
 const supabase = createClient(supabaseUrl, supabaseServiceKey, {
   auth: {
     autoRefreshToken: false,
-    persistSession: false
-  }
+    persistSession: false,
+  },
 });
 
 export async function POST(
@@ -109,27 +110,34 @@ export async function POST(
 
     try {
       // First, check if the bucket exists, create it if it doesn't
-      const { data: buckets } = await supabase
-        .storage
-        .listBuckets();
-      
-      console.log('Available buckets:', buckets?.map(b => b.name));
-      
-      const projectsBucketExists = buckets?.some(bucket => bucket.name === 'projects');
-      
+      const {data: buckets} = await supabase.storage.listBuckets();
+
+      console.log(
+        'Available buckets:',
+        buckets?.map((b) => b.name)
+      );
+
+      const projectsBucketExists = buckets?.some(
+        (bucket) => bucket.name === 'projects'
+      );
+
       if (!projectsBucketExists) {
         console.log('Projects bucket does not exist, creating it');
-        const { error: bucketError } = await supabase
-          .storage
-          .createBucket('projects', { 
+        const {error: bucketError} = await supabase.storage.createBucket(
+          'projects',
+          {
             public: true,
-            fileSizeLimit: 100 * 1024 * 1024 // 100MB
-          });
-          
+            fileSizeLimit: 100 * 1024 * 1024, // 100MB
+          }
+        );
+
         if (bucketError) {
           console.error('Failed to create bucket:', bucketError);
           return NextResponse.json(
-            {success: false, error: `خطا در ایجاد مخزن فایل: ${bucketError.message}`},
+            {
+              success: false,
+              error: `خطا در ایجاد مخزن فایل: ${bucketError.message}`,
+            },
             {status: 500}
           );
         }
@@ -137,7 +145,7 @@ export async function POST(
 
       // Now try to upload with explicit RLS bypass
       console.log('Attempting upload to path:', filePath);
-      const { error: uploadError } = await supabase.storage
+      const {error: uploadError} = await supabase.storage
         .from('projects')
         .upload(filePath, buffer, {
           upsert: true,
