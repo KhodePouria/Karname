@@ -34,11 +34,9 @@ export default function ProjectsList() {
     setSelectedProject(null);
   };
   const copyDownloadLink = async () => {
-    if (!selectedProject) return;
+    if (!selectedProject || !selectedProject.projectUrl) return;
     try {
-      await navigator.clipboard.writeText(
-        `${window.location.origin}/api/projects/${selectedProject.id}/download`
-      );
+      await navigator.clipboard.writeText(selectedProject.projectUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 1200);
     } catch {
@@ -74,6 +72,7 @@ export default function ProjectsList() {
             professor: project.publisher?.name || 'نامشخص',
             rating: project.rating,
             feedback: project.feedback,
+            projectUrl: project.projectAddress || null,
           }));
           setProjects(formattedProjects);
         }
@@ -345,7 +344,7 @@ export default function ProjectsList() {
                 {copied ? 'کپی شد!' : 'کپی لینک'}
               </button>
               <a
-                href={selectedProject.projectUrl || undefined}
+                href={`/api/projects/${selectedProject.id}/download`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm hover:bg-primary/90 transition-colors"

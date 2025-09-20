@@ -209,9 +209,14 @@ export default function ProjectEvaluations() {
                     <p className="text-gray-800">
                       <strong>فایل پروژه:</strong> موجود
                     </p>
-                    <button className="mt-2 text-primary hover:underline">
+                    <a
+                      href={`/api/projects/${selectedProject}/download`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2 text-primary hover:underline"
+                    >
                       دانلود فایل پروژه
-                    </button>
+                    </a>
                   </div>
                 </div>
 

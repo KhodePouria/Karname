@@ -1,9 +1,12 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {PrismaClient} from '@prisma/client';
-import path from 'path';
-import {writeFile, mkdir} from 'fs/promises';
+import {createClient} from '@supabase/supabase-js';
 
 const prisma = new PrismaClient();
+const supabase = createClient(
+  process.env.SUPABASE_URL || '',
+  process.env.SUPABASE_ANON_KEY || ''
+);
 
 export async function POST(
   request: NextRequest,
@@ -84,29 +87,35 @@ export async function POST(
       );
     }
 
-    // Create uploads directory
-    const uploadsDir = path.join(
-      process.cwd(),
-      'uploads',
-      'assignments',
-      assignmentId
-    );
-    try {
-      await mkdir(uploadsDir, {recursive: true});
-    } catch {
-      // Directory might already exist
-    }
-
-    // Generate unique filename
+    // Generate unique filename for storage
     const timestamp = Date.now();
     const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
     const filename = `student_${studentId}_${timestamp}_${sanitizedName}`;
-    const filepath = path.join(uploadsDir, filename);
+    const filePath = `assignments/${assignmentId}/${filename}`;
 
-    // Save file to disk
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    await writeFile(filepath, buffer);
+    // Upload to Supabase Storage
+    const {error: uploadError} = await supabase.storage
+      .from('projects')
+      .upload(filePath, file, {upsert: true});
+
+    if (uploadError) {
+      return NextResponse.json(
+        {success: false, error: `خطا در آپلود فایل: ${uploadError.message}`},
+        {status: 500}
+      );
+    }
+
+    // Get the public URL for the uploaded file
+    const {data: publicUrlData} = supabase.storage
+      .from('projects')
+      .getPublicUrl(filePath);
+
+    if (!publicUrlData || !publicUrlData.publicUrl) {
+      return NextResponse.json(
+        {success: false, error: 'خطا در ایجاد لینک دسترسی به فایل'},
+        {status: 500}
+      );
+    }
 
     // Create project record
     const project = await prisma.project.create({
@@ -116,7 +125,7 @@ export async function POST(
         senderId: parseInt(studentId),
         publisherId: assignment.classroom.professorId,
         assignmentId: parseInt(assignmentId),
-        projectAddress: filepath,
+        projectAddress: publicUrlData.publicUrl,
         sendDate: new Date(),
         rating: null,
         feedback: null,

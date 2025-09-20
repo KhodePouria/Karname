@@ -328,7 +328,7 @@ export default function StudentAssignmentPage() {
                       )}
                     </div>
                     <a
-                      href={submission.projectAddress}
+                      href={`/api/projects/${submission.id}/download`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1 text-primary hover:underline"

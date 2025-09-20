@@ -201,7 +201,7 @@ const Allprojects = () => {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <a
-                        href={p.projectAddress || undefined}
+                        href={`/api/projects/${p.id}/download`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary text-white rounded-lg text-sm hover:bg-primary/90 transition-all hover:-translate-y-0.5 shadow-sm"

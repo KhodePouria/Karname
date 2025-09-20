@@ -1,8 +1,13 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {PrismaClient} from '@prisma/client';
 import {readFile} from 'fs/promises';
+import {createClient} from '@supabase/supabase-js';
 
 const prisma = new PrismaClient();
+const supabase = createClient(
+  process.env.SUPABASE_URL || '',
+  process.env.SUPABASE_ANON_KEY || ''
+);
 
 export async function GET(
   request: NextRequest,
@@ -34,8 +39,8 @@ export async function GET(
     }
 
     // Check if file exists
-    const filePath = project.projectAddress;
-    if (!filePath) {
+    const fileUrl = project.projectAddress;
+    if (!fileUrl) {
       return NextResponse.json(
         {
           success: false,
@@ -45,9 +50,14 @@ export async function GET(
       );
     }
 
+    // Handle Supabase URLs - redirect to the URL directly
+    if (fileUrl.startsWith('http')) {
+      return NextResponse.redirect(fileUrl);
+    }
+
     try {
-      // Read the file
-      const fileBuffer = await readFile(filePath);
+      // For local files (legacy), try to read the file
+      const fileBuffer = await readFile(fileUrl);
 
       // Create a more user-friendly filename
       const studentName = `${project.sender.Fname}_${project.sender.Lname}`;
