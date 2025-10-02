@@ -2,7 +2,13 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, install the needed packages and dependancies:
+First, clone the project to your system:
+
+```bash
+git clone https://github.com/KhodePouria/Karname
+```
+
+Then, install the needed packages and dependancies:
 
 ```bash
 npm install
